@@ -27,7 +27,7 @@ pub async fn pyidea_web_discover(host: &Host, window: &str) -> IdeResult<PythonW
         let args =
             [helpers.join(helpers::WEB_DISCOVER).into_os_string(), project.root.clone().into(), output.clone().into()];
         let env = BTreeMap::from([("PYTHONDONTWRITEBYTECODE".to_owned(), "1".to_owned())]);
-        let run = super::run_python(
+        let run = super::run_program(
             &python,
             &args,
             &project.root,

@@ -92,6 +92,7 @@ ide_command::domains!(
     fork_tests: crate::ops::fork::tests,
     fork_web: crate::ops::fork::web,
     fork_toml: crate::ops::fork::toml,
+    fork_deps: crate::ops::fork::deps,
     fs: crate::ops::fs,
     heap: crate::ops::heap,
     history: crate::ops::history,

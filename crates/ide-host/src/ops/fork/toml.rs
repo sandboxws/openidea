@@ -103,7 +103,7 @@ fn site_packages_stamp(python: &Path) -> Option<SystemTime> {
     candidates.into_iter().filter_map(|dir| dir.metadata().and_then(|m| m.modified()).ok()).max()
 }
 
-fn installed_packages(python: &Path, cancel: &CancellationToken) -> IdeResult<Vec<PythonPackage>> {
+pub(crate) fn installed_packages(python: &Path, cancel: &CancellationToken) -> IdeResult<Vec<PythonPackage>> {
     let stamp = site_packages_stamp(python);
     if let Some((cached, listed, packages)) = INSTALLED.lock().get(python)
         && *cached == stamp

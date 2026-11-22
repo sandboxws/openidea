@@ -155,7 +155,7 @@ fn run_collector(
     let env = python_env(project, &helpers, env)?;
     let args =
         [helpers.join(helpers::COLLECT).into_os_string(), request_file.clone().into(), output_file.clone().into()];
-    let run = super::run_python(python, &args, &project.root, &env, cancel, timeout, "Test collection");
+    let run = super::run_program(python, &args, &project.root, &env, cancel, timeout, "Test collection");
     let run = match run {
         Ok(run) => run,
         Err(e) => {

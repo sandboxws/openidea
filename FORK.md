@@ -79,6 +79,15 @@ identifier). The IDE asks once to trust an unsigned plugin.
   and **Use Bundled TOML Schemas** (`plugins.tomlWorkbench`) turns them off. **Tools › Find TOML
   Section** searches a TOML file's tables. Each `pyproject.toml` requirement shows its `uv.lock` and
   installed versions, and completes PyPI versions after a comparison operator.
+- **Project Dependencies** (`src/features/python-deps`, `crates/ide-pyidea/src/deps`): **Tools › Open
+  Project Dependencies** shows a `pyproject.toml`'s runtime dependencies, extras, dependency groups, uv
+  dev dependencies and build requirements with their locked and installed versions, the lock's
+  transitive packages and why each is installed. Add, edit, remove, move and upgrade requirements are
+  staged (applied with `toml_edit`, keeping the file's formatting); **Preview Changes** resolves them
+  with `uv lock` and `uv sync --dry-run` in a copy of the project (at most 20,000 files and 256 MiB;
+  no symbolic links), shows the lock and environment changes and the file diffs, and **Apply and
+  Sync** writes the reviewed files, unless they changed since, then runs `uv sync --locked` for the
+  selected groups and extras in the Run tool window.
 
 ## Edits to upstream files
 

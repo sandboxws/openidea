@@ -1,5 +1,6 @@
 //! Commands of this fork's features (FORK.md); their domain logic lives in `ide-pyidea`.
 
+pub mod deps;
 pub mod ruff;
 pub mod tests;
 pub mod toml;
@@ -12,9 +13,10 @@ use std::path::Path;
 use std::process::{Command, ExitStatus, Stdio};
 use std::time::{Duration, Instant};
 
-/// How a helper script run ended, with the end of what it wrote to stderr.
+/// How a helper run ended, with (the end of) what it printed.
 pub(crate) struct HelperRun {
     pub status: ExitStatus,
+    pub stdout: String,
     pub stderr: String,
 }
 
@@ -26,10 +28,10 @@ impl HelperRun {
     }
 }
 
-/// Runs `python args` in `cwd`, killing it on `cancel` or after `timeout` (`what` names it in
-/// the timeout error). Stdout is discarded; stderr is drained as it comes so a chatty helper
-/// can't block on a full pipe.
-pub(crate) fn run_python(
+/// Runs `program args` in `cwd`, killing it on `cancel` or after `timeout` (`what` names it in
+/// the timeout error). Both outputs are drained as they come, so a chatty program can't block
+/// on a full pipe; each keeps its last 64 KiB.
+pub(crate) fn run_program(
     python: &Path,
     args: &[OsString],
     cwd: &Path,
@@ -40,21 +42,11 @@ pub(crate) fn run_python(
 ) -> IdeResult<HelperRun> {
     let mut command = Command::new(python);
     ide_core::process::prepare(&mut command);
-    command.args(args).current_dir(cwd).envs(env).stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::piped());
+    command.args(args).current_dir(cwd).envs(env).stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::piped());
     let mut child =
         command.spawn().map_err(|e| IdeError::invalid(format!("cannot start {}: {e}", python.display())))?;
-    let stderr = child.stderr.take().map(|mut pipe| {
-        std::thread::spawn(move || {
-            let mut text = String::new();
-            let _ = std::io::Read::read_to_string(&mut pipe, &mut text);
-            // Keep the end: that's where a traceback says what went wrong.
-            if text.len() > 64 * 1024 {
-                let cut = text.ceil_char_boundary(text.len() - 64 * 1024);
-                text.drain(..cut);
-            }
-            text
-        })
-    });
+    let stdout = child.stdout.take().map(drain);
+    let stderr = child.stderr.take().map(drain);
     let started = Instant::now();
     let status = loop {
         if let Some(status) = child.try_wait().map_err(|e| IdeError::internal(e.to_string()))? {
@@ -71,6 +63,22 @@ pub(crate) fn run_python(
         }
         std::thread::sleep(Duration::from_millis(30));
     };
+    let stdout = stdout.and_then(|t| t.join().ok()).unwrap_or_default();
     let stderr = stderr.and_then(|t| t.join().ok()).unwrap_or_default();
-    Ok(HelperRun { status, stderr })
+    Ok(HelperRun { status, stdout, stderr })
+}
+
+/// Reads a pipe to its end on its own thread, keeping the end: that's where a traceback or
+/// error says what went wrong.
+fn drain(mut pipe: impl std::io::Read + Send + 'static) -> std::thread::JoinHandle<String> {
+    std::thread::spawn(move || {
+        let mut bytes = Vec::new();
+        let _ = pipe.read_to_end(&mut bytes);
+        let mut text = String::from_utf8_lossy(&bytes).into_owned();
+        if text.len() > 64 * 1024 {
+            let cut = text.ceil_char_boundary(text.len() - 64 * 1024);
+            text.drain(..cut);
+        }
+        text
+    })
 }

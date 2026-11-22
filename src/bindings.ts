@@ -1365,6 +1365,23 @@ export const commands = {
 	 */
 	proxyCheckConnection: (proxy: ProxySettings, url: string) => typedError<string, IdeError>(__TAURI_INVOKE("proxy_check_connection", { proxy, url })),
 	/**
+	 *  Writes a preview's manifest and lock into the project, unless either file changed since,
+	 *  and returns the sync to run.
+	 */
+	pyideaDepsApply: (id: string) => typedError<PythonSyncCommand, IdeError>(__TAURI_INVOKE("pyidea_deps_apply", { id })),
+	/**
+	 *  The project's dependencies as declared in `path` with `edits` applied, as locked and as
+	 *  installed.
+	 */
+	pyideaDepsModel: (path: IpcPath, edits: PythonStagedEdit[], request: RequestId) => typedError<PythonDependencyModel, IdeError>(__TAURI_INVOKE("pyidea_deps_model", { path, edits, request })),
+	/**
+	 *  Resolves the staged edits in a copy of the project (`uv lock`, then `uv sync --dry-run`
+	 *  against the project's environment); nothing in the project or the environment changes.
+	 */
+	pyideaDepsPreview: (path: IpcPath, edits: PythonStagedEdit[], selection: PythonSyncSelection, request: RequestId) => typedError<PythonDependencyPreview, IdeError>(__TAURI_INVOKE("pyidea_deps_preview", { path, edits, selection, request })),
+	/**  The sync of the project's environment against its lock (Retry Sync). */
+	pyideaDepsSync: (path: IpcPath, selection: PythonSyncSelection) => typedError<PythonSyncCommand, IdeError>(__TAURI_INVOKE("pyidea_deps_sync", { path, selection })),
+	/**
 	 *  `text` (the contents of `path`) with Ruff's safe lint fixes applied (`fix`) and then
 	 *  formatted by Ruff (`format`), or `None` when nothing changes. The project's Ruff
 	 *  configuration and exclusions apply. Cancel with `cancel_request(request)`.
@@ -11364,15 +11381,98 @@ export type PythonDebuggerSettings = {
 	gevent?: boolean,
 };
 
+export type PythonDeclaredGroup = {
+	group: PythonDependencyGroupRef,
+	requirements: PythonDeclaredRequirement[],
+	/**  `{ include-group = "…" }` entries of a dependency group. */
+	includes: string[],
+};
+
+export type PythonDeclaredRequirement = {
+	/**  The PEP 508 string. */
+	text: string,
+	/**  Its normalized distribution name; empty for a URL or path requirement. */
+	package: string,
+	/**  UTF-16 span of the string's contents in the file; none for a staged requirement. */
+	from: number | null,
+	to: number | null,
+	/**  Added by a staged edit (not in the file yet). */
+	staged: boolean,
+};
+
+/**  A group of requirements: `name` is the extra / group name, empty for the others. */
+export type PythonDependencyGroupRef = {
+	kind: PythonDependencyKind,
+	name: string,
+};
+
+export type PythonDependencyKind = 
+/**  `[project] dependencies`. */
+"runtime" | 
+/**  `[project.optional-dependencies]`. */
+"extra" | 
+/**  PEP 735 `[dependency-groups]`. */
+"group" | 
+/**  uv's legacy `[tool.uv] dev-dependencies` (its `dev` group). */
+"uvDev" | 
+/**  `[build-system] requires`: isolated, never installed into the environment. */
+"build";
+
+export type PythonDependencyModel = {
+	path: IpcPath,
+	projectName: string | null,
+	/**  With the staged edits applied (staged requirements marked). */
+	groups: PythonDeclaredGroup[],
+	/**  Why the staged edits no longer apply to the file. */
+	editError: string | null,
+	/**  Every package the lock pins, the project's members excluded. */
+	packages: PythonPackageState[],
+	lock: IpcPath | null,
+	interpreter: IpcPath | null,
+	/**  The interpreter's virtual environment, which a sync installs into. */
+	environment: IpcPath | null,
+	uv: IpcPath | null,
+};
+
+export type PythonDependencyPreview = {
+	id: string,
+	manifestBefore: string,
+	manifestAfter: string,
+	/**  Where the lock is (or will be written). */
+	lockPath: IpcPath,
+	/**  Empty when the project has no lock yet. */
+	lockBefore: string,
+	lockAfter: string,
+	lockChanges: PythonLockChange[],
+	/**  What a sync would change in the environment (empty without one). */
+	environmentChanges: PythonEnvironmentChange[],
+	/**  What uv printed. */
+	output: string,
+};
+
 export type PythonDoctestExample = {
 	file: IpcPath,
 	/**  1-based line of the example's `>>>` prompt. */
 	line: number,
 };
 
+/**  How the environment changes: installed `before` and `after` the sync (none: absent). */
+export type PythonEnvironmentChange = {
+	name: string,
+	before: string | null,
+	after: string | null,
+};
+
 /**  One Python module's classes, in source order. */
 export type PythonFacts = {
 	classes: PythonClassFacts[],
+};
+
+/**  How a package's locked versions change. */
+export type PythonLockChange = {
+	name: string,
+	before: string[],
+	after: string[],
 };
 
 /**  A method definition the inspections can reason about. */
@@ -11395,6 +11495,17 @@ export type PythonMethodFacts = {
 export type PythonPackage = {
 	name: string,
 	version: string,
+};
+
+export type PythonPackageState = {
+	/**  Normalized. */
+	name: string,
+	locked: string[],
+	installed: string | null,
+	/**  Declared by the project (else a transitive package). */
+	direct: boolean,
+	/**  The shortest chain of dependencies from the project to it. */
+	why: string[],
 };
 
 export type PythonRelatedTests = {
@@ -11431,6 +11542,32 @@ export type PythonSettings = {
 	hideOtherProjectInterpreters?: boolean,
 	/**  Show each interpreter's path under its name on the interpreters page. */
 	showInterpreterPaths?: boolean,
+};
+
+export type PythonStagedEdit = { op: "add"; group: PythonDependencyGroupRef; requirement: string } | { op: "remove"; group: PythonDependencyGroupRef; requirement: string } | { op: "replace"; group: PythonDependencyGroupRef; requirement: string; with: string } | { op: "move"; group: PythonDependencyGroupRef; to: PythonDependencyGroupRef; requirement: string } | 
+/**
+ *  Lock a newer version within the declared constraints (`uv lock --upgrade-package`);
+ *  the file doesn't change.
+ */
+{ op: "upgrade"; package: string };
+
+/**  A command for the Run tool window. */
+export type PythonSyncCommand = {
+	command: IpcPath,
+	args: string[],
+	cwd: IpcPath,
+	env: { [key in string]: string },
+};
+
+/**  What a sync installs (PyIdea's "Select Groups and Extras"). */
+export type PythonSyncSelection = {
+	/**  Optional extras to install. */
+	extras: string[],
+	allExtras: boolean,
+	/**  Dependency groups: none for uv's defaults (`dev`), an empty list for none at all. */
+	groups: string[] | null,
+	/**  Keep installed packages the lock doesn't list (`--inexact`). */
+	inexact: boolean,
 };
 
 export type PythonTestCollectSpec = {

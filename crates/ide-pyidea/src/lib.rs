@@ -2,6 +2,7 @@
 //! commands. Builds the commands and parses what the tools print; the host resolves and
 //! runs the tools.
 
+pub mod deps;
 pub mod ruff;
 pub mod tests;
 pub mod toml;

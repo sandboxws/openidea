@@ -517,6 +517,10 @@ project_trust_status                         always             project_host bin
 project_workspace_member_set                 always             project_host bindings sync
 project_workspace_members                    always             project_host bindings sync
 proxy_check_connection                       always             desktop      bindings async
+pyidea_deps_apply                            trusted            project_host bindings async
+pyidea_deps_model                            trusted            project_host bindings async
+pyidea_deps_preview                          trusted            project_host bindings async
+pyidea_deps_sync                             trusted            project_host bindings async
 pyidea_ruff_apply                            trusted            project_host bindings async
 pyidea_ruff_info                             trusted            project_host bindings async
 pyidea_ruff_rules                            trusted            project_host bindings async
