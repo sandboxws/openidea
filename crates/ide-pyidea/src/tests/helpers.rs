@@ -6,12 +6,14 @@ use ide_core::{IdeError, IdeResult};
 use std::path::{Path, PathBuf};
 
 pub const COLLECT: &str = "openidea_tests_collect.py";
+pub const WEB_DISCOVER: &str = "openidea_web_discover.py";
 
 pub const HELPERS: &[(&str, &str)] = &[
     (COLLECT, include_str!("../../helpers/openidea_tests_collect.py")),
     ("openidea_pytest_reporter.py", include_str!("../../helpers/openidea_pytest_reporter.py")),
     ("openidea_unittest_runner.py", include_str!("../../helpers/openidea_unittest_runner.py")),
     ("openidea_doctest_runner.py", include_str!("../../helpers/openidea_doctest_runner.py")),
+    (WEB_DISCOVER, include_str!("../../helpers/openidea_web_discover.py")),
 ];
 
 /// FNV-1a over every helper's name and contents: a new build's helpers get a new directory.

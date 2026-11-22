@@ -13,7 +13,6 @@ use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
 use std::sync::LazyLock;
 use std::time::{Duration, Instant};
 
@@ -154,50 +153,22 @@ fn run_collector(
     let output_file = request_file.with_extension("out.json");
     std::fs::write(&request_file, request.to_string()).map_err(|e| IdeError::internal(e.to_string()))?;
     let env = python_env(project, &helpers, env)?;
-    let mut command = Command::new(python);
-    ide_core::process::prepare(&mut command);
-    command
-        .arg(helpers.join(helpers::COLLECT))
-        .arg(&request_file)
-        .arg(&output_file)
-        .current_dir(&project.root)
-        .envs(&env)
-        .stdin(Stdio::null())
-        .stdout(Stdio::null())
-        .stderr(Stdio::piped());
-    let mut child =
-        command.spawn().map_err(|e| IdeError::invalid(format!("cannot start {}: {e}", python.display())))?;
-    let started = Instant::now();
-    let status = loop {
-        if let Some(status) = child.try_wait().map_err(|e| IdeError::internal(e.to_string()))? {
-            break status;
-        }
-        if cancel.is_cancelled() || started.elapsed() > timeout {
-            let _ = child.kill();
-            let _ = child.wait();
+    let args =
+        [helpers.join(helpers::COLLECT).into_os_string(), request_file.clone().into(), output_file.clone().into()];
+    let run = super::run_python(python, &args, &project.root, &env, cancel, timeout, "Test collection");
+    let run = match run {
+        Ok(run) => run,
+        Err(e) => {
             let _ = std::fs::remove_file(&request_file);
-            return Err(if cancel.is_cancelled() {
-                IdeError::cancelled()
-            } else {
-                IdeError::invalid("Test collection timed out")
-            });
+            return Err(e);
         }
-        std::thread::sleep(Duration::from_millis(30));
     };
-    let mut stderr = String::new();
-    if let Some(mut pipe) = child.stderr.take() {
-        let _ = std::io::Read::read_to_string(&mut pipe, &mut stderr);
-    }
     let _ = std::fs::remove_file(&request_file);
     let output = std::fs::read_to_string(&output_file);
     let _ = std::fs::remove_file(&output_file);
     match output {
         Ok(json) => serde_json::from_str(&json).map_err(|e| IdeError::internal(format!("unreadable collection: {e}"))),
-        Err(_) => {
-            let tail: String =
-                stderr.lines().rev().take(20).collect::<Vec<_>>().into_iter().rev().collect::<Vec<_>>().join("\n");
-            Err(IdeError::invalid(format!("Test collection failed ({status}):\n{tail}")))
-        }
+        Err(_) => Err(IdeError::invalid(format!("Test collection failed ({}):\n{}", run.status, run.stderr_tail()))),
     }
 }
 

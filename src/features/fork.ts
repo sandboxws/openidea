@@ -10,6 +10,7 @@
 import { activate as gruvppuccin } from "./gruvppuccin";
 import { activate as pyidea } from "./pyidea";
 import { activate as pythonTests } from "./python-tests";
+import { activate as pythonWeb } from "./python-web";
 
 type Activate = () => void | (() => void);
 
@@ -17,4 +18,5 @@ export const forkFeatures: Array<[string, Activate]> = [
   ["gruvppuccin", gruvppuccin],
   ["pyidea", pyidea],
   ["python-tests", pythonTests],
+  ["python-web", pythonWeb],
 ];

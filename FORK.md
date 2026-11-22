@@ -64,6 +64,14 @@ identifier). The IDE asks once to trust an unsigned plugin.
   test files, `conftest.py` subtrees), and runs doctests from the gutter or one example from the
   editor's context menu. The Python helpers are embedded and written to the data directory; test
   them with `PYTHON=<python with pytest> cargo test -p ide-pyidea -- --ignored`.
+- **Python Web** (`src/features/python-web`, `crates/ide-pyidea/src/web.rs`):
+  Flask Server, FastAPI Server (Uvicorn) and Django Server run configurations, without automatic
+  reload, so Debug stops in request handlers. **Tools › Discover Web Applications** reads the
+  project's files (nothing is imported) for Flask and FastAPI instances and factories, FastAPI's
+  `[tool.fastapi]` entrypoint and Django's `manage.py`, and creates the chosen one's configuration,
+  started from its own directory and importing from its `src/` layout. An empty interpreter means the
+  project's: upstream swaps `python` and sets `PYTHONUNBUFFERED` only for its own Python kinds, so these
+  types do both themselves.
 
 ## Edits to upstream files
 

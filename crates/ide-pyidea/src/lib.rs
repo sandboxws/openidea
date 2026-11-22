@@ -4,3 +4,4 @@
 
 pub mod ruff;
 pub mod tests;
+pub mod web;

@@ -90,6 +90,7 @@ ide_command::domains!(
     flutter: crate::ops::flutter,
     fork_ruff: crate::ops::fork::ruff,
     fork_tests: crate::ops::fork::tests,
+    fork_web: crate::ops::fork::web,
     fs: crate::ops::fs,
     heap: crate::ops::heap,
     history: crate::ops::history,

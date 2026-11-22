@@ -1395,6 +1395,11 @@ export const commands = {
 	 */
 	pyideaTestsRelated: (changed: IpcPath[]) => typedError<PythonRelatedTests, IdeError>(__TAURI_INVOKE("pyidea_tests_related", { changed })),
 	/**
+	 *  The project's Django, Flask and FastAPI applications, read from its files with the
+	 *  project's interpreter; nothing is imported or installed.
+	 */
+	pyideaWebDiscover: () => typedError<PythonWebDiscovery, IdeError>(__TAURI_INVOKE("pyidea_web_discover")),
+	/**
 	 *  The requirements of a `requirements*.txt` / `pyproject.toml` the project's interpreter
 	 *  doesn't satisfy; `None` for other files, or with no local interpreter to ask.
 	 */
@@ -11492,6 +11497,29 @@ export type PythonTestSnapshot = {
 	line: number,
 	lines: string[],
 };
+
+export type PythonWebApp = {
+	framework: PythonWebFramework,
+	/**  A `manage.py` path (Django), else `module:app` / `module:factory`. */
+	target: string,
+	/**  `target` names an application factory. */
+	factory?: boolean,
+	file: string,
+	/**  1-based. */
+	line?: number,
+	/**  Where to start the server. */
+	directory: string,
+	/**  The directory the application's module imports from. */
+	pythonPath: string,
+};
+
+export type PythonWebDiscovery = {
+	apps?: PythonWebApp[],
+	/**  Files that didn't parse. */
+	errors?: string[],
+};
+
+export type PythonWebFramework = "django" | "flask" | "fastapi";
 
 /**  Color Scheme › Language Defaults › Rainbow brackets: which delimiters are coloured. */
 export type RainbowBracketKinds = {

@@ -282,5 +282,44 @@ class DoctestTests(unittest.TestCase):
         self.assertEqual(after_setup_failure["location"]["line"], 15)
 
 
+class WebDiscoveryTests(unittest.TestCase):
+    def test_finds_apps_factories_and_django_without_importing_them(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            write(
+                root,
+                {
+                    "webapp/app.py": """
+                        from flask import Flask
+                        raise SystemExit("must not be imported")
+                        app = Flask(__name__)
+                        """,
+                    "services/api/src/api/__init__.py": "",
+                    "services/api/src/api/main.py": """
+                        import fastapi
+
+                        def create_app():
+                            application = fastapi.FastAPI()
+                            return application
+                        """,
+                    "site/manage.py": "import os\nos.environ.setdefault('DJANGO_SETTINGS_MODULE', 'site.settings')\n",
+                    "lib/not_an_app.py": "def create_app():\n    return 1\n",
+                    "pyproject.toml": "[tool.fastapi]\nentrypoint = 'svc.main:app'\n",
+                },
+            )
+            out = root / "out.json"
+            done = run_helper([str(HELPERS / "openidea_web_discover.py"), str(root), str(out)], root)
+            self.assertEqual(done.returncode, 0, done.stderr)
+            apps = json.loads(out.read_text(encoding="utf-8"))["apps"]
+            got = [(a["framework"], a["target"], a["factory"], a["directory"]) for a in apps]
+            self.assertIn(("django", str(root / "site/manage.py"), False, str(root / "site")), got)
+            self.assertIn(("flask", "app:app", False, str(root / "webapp")), got)
+            self.assertIn(("fastapi", "api.main:create_app", True, str(root / "services/api")), got)
+            self.assertIn(("fastapi", "svc.main:app", False, str(root)), got)
+            fastapi = next(a for a in apps if a["target"] == "api.main:create_app")
+            self.assertEqual(fastapi["pythonPath"], str(root / "services/api/src"))
+            self.assertFalse(any("not_an_app" in a["file"] for a in apps))
+
+
 if __name__ == "__main__":
     unittest.main()
