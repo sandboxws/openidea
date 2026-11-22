@@ -1,0 +1,79 @@
+# This fork
+
+`sandboxws/openidea` is a personal fork of [l0ng-ai/openidea](https://github.com/l0ng-ai/openidea).
+It adds the Gruvppuccin themes and the PyIdea Python features, and merges upstream regularly.
+Upstream moves fast (thousands of commits a month), so every fork change is built to merge cheaply:
+new code lives in new places, and edits to upstream files are few, small and listed below.
+
+## Where fork code lives
+
+| What                    | Where                                                                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Feature activation seam | `src/features/fork.ts` (`forkFeatures`, `forkSettingsWindow`)                                                                |
+| Frontend features       | `src/features/{gruvppuccin,pyidea,python-tests,python-web,toml-workbench,mojo,scientific,spark}/`                            |
+| Backend                 | `crates/ide-pyidea/` (domain logic), `crates/ide-host/src/ops/fork/` (commands)                                              |
+| Plugins                 | `plugins/gruvppuccin/`, `plugins/mojo/`, `plugins/sparksql/` (never `plugins/official/`, which upstream signs and publishes) |
+| Scripts                 | `scripts/fork/` (merge guard), `scripts/gruvppuccin/` (theme generator)                                                      |
+
+Rules:
+
+- Features never import each other. Fork features talk to upstream through hidden actions
+  (`run.pluginStart`, `run.stopProcess`, `run.createConfig`, `diff.compareTexts`,
+  `profiler.showCpuProfiles`), IPC commands and `@/editor/*` exports.
+- Settings live in the free-form `settings.plugins.<namespace>` map (`gruvppuccin`, `pyidea`, `mojo`),
+  with defaults in fork TypeScript, so `crates/ide-core/src/settings.rs` and the frontend settings
+  schema are never edited. Per-project UI state goes in `localStorage`, keyed by project root.
+- Backend per-project state lives in fork-owned maps keyed by project root, not in `Project`.
+- Ids: actions `gruvppuccin.*`, `pyidea.*`, `pythonTests.*`, …; commands `pyidea_*`.
+  Icons are registered with `registerExternalIcons` (`ext:fork/…`) instead of editing `src/ui/icons.tsx`.
+  No default shortcuts (those would edit `src/platform/keymaps/`).
+- New UI text goes in one contiguous fork block at the top of `src/platform/locales/text/en.json` and
+  `zh.json`.
+
+## Edits to upstream files
+
+Every edit to an upstream file is listed in `scripts/fork/touchpoints.json` with a budget of changed
+lines. The merge guard fails on anything unlisted or over budget:
+
+```sh
+node scripts/fork/touchpoints.ts            # against upstream/main
+node scripts/fork/touchpoints.ts <ref>      # against another base
+```
+
+| File                        | Change                                                               |
+| --------------------------- | -------------------------------------------------------------------- |
+| `src/features/index.ts`     | imports `forkFeatures` and activates it after upstream's features    |
+| `src/settingsWindowBoot.ts` | imports `forkSettingsWindow` and activates it after upstream's pages |
+
+## Syncing with upstream
+
+One-time setup:
+
+```sh
+git remote add upstream https://github.com/l0ng-ai/openidea.git
+```
+
+Each sync:
+
+```sh
+git fetch upstream
+git switch -c sync/upstream-$(date +%Y%m%d) main
+git merge upstream/main
+```
+
+Resolve conflicts:
+
+- `src/bindings.ts`, `Cargo.lock`, `pnpm-lock.yaml`: take upstream's version, then regenerate
+  (`pnpm gen:bindings`, `cargo update -w`, `pnpm install`). Never hand-merge them.
+- Text catalogs: keep both upstream's entries and the fork block.
+- A touch-point file: reapply the fork's few lines on top of upstream's version.
+
+Then run `node scripts/fork/touchpoints.ts` and the checks CI runs for the parts that changed
+(see `CLAUDE.md` › Before opening a PR), and open a PR from the sync branch into `main`.
+
+## Toolchain notes
+
+- `mise.toml` needs a recent mise. Without one, use Node 22 (`node --version` ≥ 22.22.2 on the 22.x
+  line) and a Rust toolchain at or above the workspace `rust-version` directly.
+- The fork's upstream-facing CI workflows (release, CNB mirror, plugin index) do nothing useful here;
+  disable them on GitHub with `gh workflow disable <name> -R sandboxws/openidea` if they get in the way.

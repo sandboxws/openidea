@@ -1,0 +1,31 @@
+{
+  "owned": [
+    "FORK.md",
+    "scripts/fork/**",
+    "scripts/gruvppuccin/**",
+    "src/features/fork.ts",
+    "src/features/gruvppuccin/**",
+    "src/features/pyidea/**",
+    "src/features/python-tests/**",
+    "src/features/python-web/**",
+    "src/features/toml-workbench/**",
+    "src/features/mojo/**",
+    "src/features/scientific/**",
+    "src/features/spark/**",
+    "plugins/gruvppuccin/**",
+    "plugins/mojo/**",
+    "plugins/sparksql/**",
+    "crates/ide-pyidea/**",
+    "crates/ide-host/src/ops/fork/**",
+    "crates/ide-host/tests/gruvppuccin_plugin.rs",
+    "crates/ide-host/tests/mojo_plugin.rs",
+    "smoke/python-tests.test.ts"
+  ],
+  "generated": ["src/bindings.ts", "Cargo.lock", "pnpm-lock.yaml"],
+  "shared": {
+    "src/features/index.ts": 3,
+    "src/settingsWindowBoot.ts": 2
+  },
+  "catalogs": ["src/platform/locales/text/en.json", "src/platform/locales/text/zh.json"],
+  "contracts": []
+}

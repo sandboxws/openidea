@@ -4,6 +4,7 @@
  * a disposer. The editor provides the editor service; app must install its launch
  * barrier before welcome can restore a remembered project.
  */
+import { forkFeatures } from "./fork";
 import { activate as mcp } from "./mcp";
 import { activate as projectTrust } from "./project-trust";
 import { activate as editor } from "@/editor/core";
@@ -126,5 +127,5 @@ function activateAll(what: string, list: Array<[string, Activate]>): () => void 
 }
 
 export function activateFeatures(): () => void {
-  return activateAll("feature", features);
+  return activateAll("feature", [...features, ...forkFeatures]);
 }
