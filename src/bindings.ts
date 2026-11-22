@@ -1377,6 +1377,24 @@ export const commands = {
 	/**  Ruff's lint rules (empty without Ruff), cached per Ruff version. */
 	pyideaRuffRules: () => typedError<RuffRule[], IdeError>(__TAURI_INVOKE("pyidea_ruff_rules")),
 	/**
+	 *  Collects `spec.framework`'s tests with the project's (or the given) interpreter. Collection
+	 *  imports project code and runs collection hooks, not test bodies. Cancel with
+	 *  `cancel_request(request)`.
+	 */
+	pyideaTestsCollect: (spec: PythonTestCollectSpec, request: RequestId) => typedError<PythonTestCollection, IdeError>(__TAURI_INVOKE("pyidea_tests_collect", { spec, request })),
+	/**
+	 *  Streams the results a prepared run appends to `events` until it reports the end, or until
+	 *  `cancel_request(request)` (after the run's process exits), which reads what's left first.
+	 */
+	pyideaTestsEvents: (events: IpcPath, request: RequestId, onEvent: Channel<PythonTestEvent>) => typedError<null, IdeError>(__TAURI_INVOKE("pyidea_tests_events", { events, request, onEvent })),
+	/**  The command line of a test run that reports results to the returned `events` file. */
+	pyideaTestsPrepare: (spec: PythonTestRunSpec) => typedError<PythonTestRun, IdeError>(__TAURI_INVOKE("pyidea_tests_prepare", { spec })),
+	/**
+	 *  The collected test files that `changed` files affect, after refreshing the import graph.
+	 *  Empty until the project's tests were collected.
+	 */
+	pyideaTestsRelated: (changed: IpcPath[]) => typedError<PythonRelatedTests, IdeError>(__TAURI_INVOKE("pyidea_tests_related", { changed })),
+	/**
 	 *  The requirements of a `requirements*.txt` / `pyproject.toml` the project's interpreter
 	 *  doesn't satisfy; `None` for other files, or with no local interpreter to ask.
 	 */
@@ -11306,10 +11324,33 @@ export type PythonClassFacts = {
 	methods: PythonMethodFacts[],
 };
 
+/**  One collected test case (a pytest parameter case is one). */
+export type PythonCollectedTest = {
+	/**
+	 *  The id the runner reports results under: a pytest node id, a unittest id
+	 *  (`pkg.mod.Class.test`) or `FILE::SYMBOL` for a docstring.
+	 */
+	id: string,
+	file: string,
+	name: string,
+	/**  0-based line of the test's definition (pytest) or 0-based docstring line (doctest). */
+	line?: number,
+	/**  Dotted symbol within the file: `TestCart.test_total`. */
+	symbol?: string,
+	/**  A pytest parameter case's values. */
+	params?: { [key in string]: string } | null,
+};
+
 /**  Python Debugger (debugpy launch options). */
 export type PythonDebuggerSettings = {
 	attachSubprocess?: boolean,
 	gevent?: boolean,
+};
+
+export type PythonDoctestExample = {
+	file: IpcPath,
+	/**  1-based line of the example's `>>>` prompt. */
+	line: number,
 };
 
 /**  One Python module's classes, in source order. */
@@ -11337,6 +11378,12 @@ export type PythonMethodFacts = {
 export type PythonPackage = {
 	name: string,
 	version: string,
+};
+
+export type PythonRelatedTests = {
+	testFiles: IpcPath[],
+	/**  Collect again first: the change can add, remove or rename tests. */
+	refresh: boolean,
 };
 
 export type PythonRequirements = {
@@ -11367,6 +11414,83 @@ export type PythonSettings = {
 	hideOtherProjectInterpreters?: boolean,
 	/**  Show each interpreter's path under its name on the interpreters page. */
 	showInterpreterPaths?: boolean,
+};
+
+export type PythonTestCollectSpec = {
+	framework: PythonTestFramework,
+	/**  The interpreter (absolute, or relative to the project); default: the project's. */
+	interpreter?: string | null,
+	/**  Runner arguments of a saved configuration (`-k slow`, `--doctest-modules`). */
+	args?: string[],
+	env?: { [key in string]: string },
+};
+
+export type PythonTestCollection = {
+	tests: PythonCollectedTest[],
+	/**  Collection failures (import errors…), shown beside the tests that did collect. */
+	errors: string[],
+	interpreter: string,
+};
+
+export type PythonTestEvent = ({ event: "collected"; count: number }) & { exitstatus?: never; id?: never } | ({ event: "started"; id: string }) & { count?: never; exitstatus?: never } | {
+	event: "result",
+} & PythonTestResult | ({ event: "finished"; exitstatus: number }) & { count?: never; id?: never };
+
+/**  The framework a collection or run uses. */
+export type PythonTestFramework = "pytest" | "unittest" | "doctest";
+
+export type PythonTestLocation = {
+	file: string,
+	/**  1-based. */
+	line: number,
+};
+
+export type PythonTestOutcome = "passed" | "failed" | "error" | "skipped" | "xfailed" | "xpassed";
+
+export type PythonTestResult = {
+	id: string,
+	outcome: PythonTestOutcome,
+	duration?: number | null,
+	message?: string | null,
+	longrepr?: string | null,
+	location?: PythonTestLocation | null,
+	expected?: string | null,
+	actual?: string | null,
+	params?: { [key in string]: string } | null,
+	snapshot?: PythonTestSnapshot | null,
+	stdout?: string | null,
+	stderr?: string | null,
+	log?: string | null,
+};
+
+/**  A prepared run: start `interpreter args` in `cwd` with `env`; results append to `events`. */
+export type PythonTestRun = {
+	interpreter: string,
+	args: string[],
+	cwd: IpcPath,
+	env: { [key in string]: string },
+	events: IpcPath,
+};
+
+export type PythonTestRunSpec = {
+	framework: PythonTestFramework,
+	interpreter?: string | null,
+	/**  Test ids to run; empty runs everything. */
+	ids?: string[],
+	args?: string[],
+	env?: { [key in string]: string },
+	cwd?: IpcPath | null,
+	example?: PythonDoctestExample | null,
+};
+
+/**  Source lines around a failure, with their original line numbers. */
+export type PythonTestSnapshot = {
+	file: string,
+	/**  1-based number of `lines[0]`. */
+	start: number,
+	/**  1-based number of the reported line. */
+	line: number,
+	lines: string[],
 };
 
 /**  Color Scheme › Language Defaults › Rainbow brackets: which delimiters are coloured. */

@@ -3,3 +3,4 @@
 //! runs the tools.
 
 pub mod ruff;
+pub mod tests;

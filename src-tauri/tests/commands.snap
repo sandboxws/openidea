@@ -520,6 +520,10 @@ proxy_check_connection                       always             desktop      bin
 pyidea_ruff_apply                            trusted            project_host bindings async
 pyidea_ruff_info                             trusted            project_host bindings async
 pyidea_ruff_rules                            trusted            project_host bindings async
+pyidea_tests_collect                         trusted            project_host bindings async
+pyidea_tests_events                          always             project_host bindings async
+pyidea_tests_prepare                         trusted            project_host bindings async
+pyidea_tests_related                         trusted            project_host bindings async
 python_requirements                          trusted            project_host bindings async
 recent_files                                 always             project_host bindings sync
 recent_project_groups                        always             desktop      bindings sync

@@ -57,6 +57,13 @@ identifier). The IDE asks once to trust an unsigned plugin.
   `# noqa`, `# ruff: noqa`, `# type: ignore[…]`, `# pyright: ignore[…]`, `# pyrefly: ignore[…]` and
   `# ty: ignore[…]` comments. Ruff comes from the project's environment, `languages.ruff.path`, managed
   tools or `PATH`; nothing is installed.
+- **Python Tests** (`src/features/python-tests`, `crates/ide-pyidea/src/tests`, `crates/ide-pyidea/helpers`):
+  a test explorer (left stripe) that collects pytest, unittest and doctest tests before running
+  them, runs and debugs any group, shows failures with their source, parameter values, comparison
+  and output, watches saves and external changes to run the related tests (import graph, mirrored
+  test files, `conftest.py` subtrees), and runs doctests from the gutter or one example from the
+  editor's context menu. The Python helpers are embedded and written to the data directory; test
+  them with `PYTHON=<python with pytest> cargo test -p ide-pyidea -- --ignored`.
 
 ## Edits to upstream files
 

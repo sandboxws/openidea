@@ -26,9 +26,9 @@
   "shared": {
     "src/features/index.ts": 3,
     "src/settingsWindowBoot.ts": 2,
-    "src/platform/locales/text/en.json": 40,
-    "src/platform/locales/text/zh.json": 40,
-    "crates/ide-host/src/ops/mod.rs": 2,
+    "src/platform/locales/text/en.json": 90,
+    "src/platform/locales/text/zh.json": 90,
+    "crates/ide-host/src/ops/mod.rs": 3,
     "crates/ide-host/Cargo.toml": 1,
     "src-tauri/src/lib.rs": 2,
     "src/editor/lsp/hover.ts": 4
