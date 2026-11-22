@@ -1395,6 +1395,18 @@ export const commands = {
 	 */
 	pyideaTestsRelated: (changed: IpcPath[]) => typedError<PythonRelatedTests, IdeError>(__TAURI_INVOKE("pyidea_tests_related", { changed })),
 	/**
+	 *  The locked (`uv.lock`) and installed (project interpreter) version of each requirement of
+	 *  a `pyproject.toml`; empty for other files.
+	 */
+	pyideaTomlHints: (doc: DocId, request: RequestId) => typedError<PythonVersionHint[], IdeError>(__TAURI_INVOKE("pyidea_toml_hints", { doc, request })),
+	/**
+	 *  The bundled schemas, written to the data directory, and the document patterns taplo
+	 *  associates them with.
+	 */
+	pyideaTomlSchemas: () => typedError<TomlSchemas, IdeError>(__TAURI_INVOKE("pyidea_toml_schemas")),
+	/**  PyPI versions for the `pyproject.toml` requirement at `offset` (completion inside its string). */
+	pyideaTomlVersions: (doc: DocId, offset: number, request: RequestId) => typedError<DependencyVersions[], IdeError>(__TAURI_INVOKE("pyidea_toml_versions", { doc, offset, request })),
+	/**
 	 *  The project's Django, Flask and FastAPI applications, read from its files with the
 	 *  project's interpreter; nothing is imported or installed.
 	 */
@@ -11498,6 +11510,17 @@ export type PythonTestSnapshot = {
 	lines: string[],
 };
 
+/**  What a `pyproject.toml` requirement resolves to: `from..to` is its string's UTF-16 span. */
+export type PythonVersionHint = {
+	package: string,
+	from: number,
+	to: number,
+	/**  Pinned by `uv.lock` (several when markers fork the resolution). */
+	locked: string[],
+	/**  Installed in the project interpreter. */
+	installed: string | null,
+};
+
 export type PythonWebApp = {
 	framework: PythonWebFramework,
 	/**  A `manage.py` path (Django), else `module:app` / `module:factory`. */
@@ -13559,6 +13582,23 @@ export type TomcatInstallation_Serialize = {
 	name?: string | null,
 	base?: string | null,
 	tomee: boolean,
+};
+
+/**
+ *  A document pattern (a regular expression over the document URI, as taplo's
+ *  `schema.associations` takes) and the schema URL for it.
+ */
+export type TomlSchemaAssociation = {
+	pattern: string,
+	schema: string,
+	/**  File names the pattern matches: a user's own association for one of them wins. */
+	files: string[],
+};
+
+export type TomlSchemas = {
+	associations: TomlSchemaAssociation[],
+	/**  URL prefix of every bundled schema: associations to it are the IDE's own. */
+	prefix: string,
 };
 
 /**  How tool calls between messages show. */

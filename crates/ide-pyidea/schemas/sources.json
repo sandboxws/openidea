@@ -1,0 +1,26 @@
+[
+  {
+    "file": "uv.json",
+    "url": "https://raw.githubusercontent.com/astral-sh/uv/24688aaca1e7fd104437a0909d5db3afdc7dcdb0/uv.schema.json",
+    "sha256": "e3c219be2663ce96adef3a6a4b1010894777a5b9c5371114ae24191ecf36764b",
+    "bundled_sha256": "37bf4e38bc1bae9e4e888d342710efb9cbedb2dbb47c3573ec171466bdde7087"
+  },
+  {
+    "file": "ruff.json",
+    "url": "https://raw.githubusercontent.com/astral-sh/ruff/795cf50aa93688da7d1168cbab8b81c7cac7a1d2/ruff.schema.json",
+    "sha256": "26e5fbb7225ed3e94858a19dbe3e825fff792e0349ec3538586a23286fa79384",
+    "bundled_sha256": "35666c9d1a8b1b15401a063cd74e0ac78bf9f2039776234dbee8e40cc49fdd62"
+  },
+  {
+    "file": "project_metadata.schema.json",
+    "url": "https://raw.githubusercontent.com/abravalheri/validate-pyproject/cfa796fadfae9c3bf7d8c816c73fe55824f5cfd6/src/validate_pyproject/project_metadata.schema.json",
+    "sha256": "ad7d31e1bd2566a1a5e331eb98f467aa2047d3d418a32a0d82f0ed98c0924122",
+    "bundled_sha256": "6488a774f07ba171f854ba1f00d55fde16869e55b39dccf5cab9a2e81cee7d81"
+  },
+  {
+    "file": "pyproject.json",
+    "url": "https://raw.githubusercontent.com/abravalheri/validate-pyproject/cfa796fadfae9c3bf7d8c816c73fe55824f5cfd6/src/validate_pyproject/pyproject_toml.schema.json",
+    "sha256": "56646426ab4057bb04de663cb2c9b4f334f5b29fae086df1311cc912a5be7bd8",
+    "bundled_sha256": "fed8c8d9f14d1be847c78dcb4a1baff898aa66ec303991c16c7b5ade5c3e00d0"
+  }
+]

@@ -1,6 +1,6 @@
 [package]
 name = "ide-pyidea"
-description = "The fork's PyIdea features (FORK.md): Ruff lint fixes and rule catalog for Python save actions and suppression comments"
+description = "The fork's PyIdea features (FORK.md): Ruff, the Python test explorer, web apps and the TOML workbench"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -10,6 +10,7 @@ ide-core.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 specta.workspace = true
+toml.workspace = true
 
 [dev-dependencies]
 tempfile.workspace = true

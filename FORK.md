@@ -72,6 +72,13 @@ identifier). The IDE asks once to trust an unsigned plugin.
   started from its own directory and importing from its `src/` layout. An empty interpreter means the
   project's: upstream swaps `python` and sets `PYTHONUNBUFFERED` only for its own Python kinds, so these
   types do both themselves.
+- **TOML Workbench** (`src/features/toml-workbench`, `crates/ide-pyidea/src/toml`, `crates/ide-pyidea/schemas`):
+  PyIdea's bundled schemas for `pyproject.toml` (with uv and Ruff settings), `uv.toml` and `ruff.toml`
+  give taplo completion, hover and diagnostics offline. They are written to the data directory and
+  associated in the global `languageServers.taplo.settings`; a user association for the same file wins,
+  and **Use Bundled TOML Schemas** (`plugins.tomlWorkbench`) turns them off. **Tools › Find TOML
+  Section** searches a TOML file's tables. Each `pyproject.toml` requirement shows its `uv.lock` and
+  installed versions, and completes PyPI versions after a comparison operator.
 
 ## Edits to upstream files
 

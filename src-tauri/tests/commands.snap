@@ -524,6 +524,9 @@ pyidea_tests_collect                         trusted            project_host bin
 pyidea_tests_events                          always             project_host bindings async
 pyidea_tests_prepare                         trusted            project_host bindings async
 pyidea_tests_related                         trusted            project_host bindings async
+pyidea_toml_hints                            trusted            project_host bindings async
+pyidea_toml_schemas                          always             project_host bindings async
+pyidea_toml_versions                         trusted            project_host bindings async
 pyidea_web_discover                          trusted            project_host bindings async
 python_requirements                          trusted            project_host bindings async
 recent_files                                 always             project_host bindings sync

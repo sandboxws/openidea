@@ -4,4 +4,5 @@
 
 pub mod ruff;
 pub mod tests;
+pub mod toml;
 pub mod web;

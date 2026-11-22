@@ -11,6 +11,7 @@ import { activate as gruvppuccin } from "./gruvppuccin";
 import { activate as pyidea } from "./pyidea";
 import { activate as pythonTests } from "./python-tests";
 import { activate as pythonWeb } from "./python-web";
+import { activate as tomlWorkbench } from "./toml-workbench";
 
 type Activate = () => void | (() => void);
 
@@ -19,4 +20,5 @@ export const forkFeatures: Array<[string, Activate]> = [
   ["pyidea", pyidea],
   ["python-tests", pythonTests],
   ["python-web", pythonWeb],
+  ["toml-workbench", tomlWorkbench],
 ];

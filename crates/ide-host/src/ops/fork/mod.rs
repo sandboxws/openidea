@@ -2,6 +2,7 @@
 
 pub mod ruff;
 pub mod tests;
+pub mod toml;
 pub mod web;
 
 use ide_core::{CancellationToken, IdeError, IdeResult};
