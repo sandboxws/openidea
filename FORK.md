@@ -47,6 +47,17 @@ identifier). The IDE asks once to trust an unsigned plugin.
   preset, bold keyword and corner radius settings are the fork feature `src/features/gruvppuccin`
   (Settings › Appearance › Gruvppuccin).
 
+## Fork features
+
+- **Gruvppuccin** (`src/features/gruvppuccin`, `plugins/gruvppuccin`): see above.
+- **Python save actions, rule links, suppression completion** (`src/features/pyidea`,
+  `crates/ide-pyidea`, `crates/ide-host/src/ops/fork`): Ruff's safe fixes and formatting on save
+  (Settings › Tools › Actions on Save › Python, per project; explicit saves only, like upstream's save
+  actions), a documentation link for each Python problem in the hover, and completion of codes in
+  `# noqa`, `# ruff: noqa`, `# type: ignore[…]`, `# pyright: ignore[…]`, `# pyrefly: ignore[…]` and
+  `# ty: ignore[…]` comments. Ruff comes from the project's environment, `languages.ruff.path`, managed
+  tools or `PATH`; nothing is installed.
+
 ## Edits to upstream files
 
 Every edit to an upstream file is listed in `scripts/fork/touchpoints.json` with a budget of changed
@@ -57,11 +68,15 @@ node scripts/fork/touchpoints.ts            # against upstream/main
 node scripts/fork/touchpoints.ts <ref>      # against another base
 ```
 
-| File                                     | Change                                                               |
-| ---------------------------------------- | -------------------------------------------------------------------- |
-| `src/features/index.ts`                  | imports `forkFeatures` and activates it after upstream's features    |
-| `src/settingsWindowBoot.ts`              | imports `forkSettingsWindow` and activates it after upstream's pages |
-| `src/platform/locales/text/{en,zh}.json` | the fork's UI text, one block at the top of each catalog             |
+| File                                     | Change                                                                         |
+| ---------------------------------------- | ------------------------------------------------------------------------------ |
+| `src/features/index.ts`                  | imports `forkFeatures` and activates it after upstream's features              |
+| `src/settingsWindowBoot.ts`              | imports `forkSettingsWindow` and activates it after upstream's pages           |
+| `src/platform/locales/text/{en,zh}.json` | the fork's UI text, one block at the top of each catalog                       |
+| `src/editor/lsp/hover.ts`                | `diagnosticRowDecorators`: lets a feature add to each problem row of the hover |
+| `crates/ide-host/src/ops/mod.rs`         | declares `ops::fork` and lists its command domains                             |
+| `crates/ide-host/Cargo.toml`             | depends on `ide-pyidea` by path                                                |
+| `src-tauri/src/lib.rs`                   | `recursion_limit` 512: upstream's command catalogue sits at the 256 limit      |
 
 ## Syncing with upstream
 
@@ -81,7 +96,7 @@ git merge upstream/main
 
 Resolve conflicts:
 
-- `src/bindings.ts`, `Cargo.lock`, `pnpm-lock.yaml`: take upstream's version, then regenerate
+- `src/bindings.ts`, `src-tauri/tests/commands.snap`, `Cargo.lock`, `pnpm-lock.yaml`: take upstream's version, then regenerate
   (`pnpm gen:bindings`, `cargo update -w`, `pnpm install`). Never hand-merge them.
 - Text catalogs: keep both upstream's entries and the fork block.
 - A touch-point file: reapply the fork's few lines on top of upstream's version.

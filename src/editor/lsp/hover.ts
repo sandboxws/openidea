@@ -104,6 +104,9 @@ function diagnosticAction(label: string, shortcut: string | undefined, run: () =
   return button;
 }
 
+/** Adds to each problem row of the hover, after its message and source (rule codes, documentation links). */
+export const diagnosticRowDecorators = new Set<(row: HTMLElement, diagnostic: EditorDiagnostic) => void>();
+
 function renderDiagnostics(view: EditorView, diags: PlacedDiagnostic[]): HTMLElement {
   const box = document.createElement("div");
   box.className = "cm-lsp-hover-diagnostics";
@@ -127,6 +130,7 @@ function renderDiagnostics(view: EditorView, diags: PlacedDiagnostic[]): HTMLEle
       src.textContent = d.source;
       row.appendChild(src);
     }
+    for (const decorate of diagnosticRowDecorators) decorate(row, d);
     const actions = document.createElement("div");
     actions.className = "cm-lsp-diag-actions";
     const more = diagnosticAction(tx("More actions…"), shortcutLabel("code.showIntentions"), () => {

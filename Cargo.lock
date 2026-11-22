@@ -4484,6 +4484,7 @@ dependencies = [
  "ide-mcp",
  "ide-notebook",
  "ide-plugin",
+ "ide-pyidea",
  "ide-remote",
  "ide-run",
  "ide-scaffold",
@@ -4780,6 +4781,17 @@ dependencies = [
  "specta",
  "tempfile",
  "tracing",
+]
+
+[[package]]
+name = "ide-pyidea"
+version = "0.1.50"
+dependencies = [
+ "ide-core",
+ "serde",
+ "serde_json",
+ "specta",
+ "tempfile",
 ]
 
 [[package]]

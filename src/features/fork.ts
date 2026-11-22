@@ -8,7 +8,11 @@
  * editor service eagerly.
  */
 import { activate as gruvppuccin } from "./gruvppuccin";
+import { activate as pyidea } from "./pyidea";
 
 type Activate = () => void | (() => void);
 
-export const forkFeatures: Array<[string, Activate]> = [["gruvppuccin", gruvppuccin]];
+export const forkFeatures: Array<[string, Activate]> = [
+  ["gruvppuccin", gruvppuccin],
+  ["pyidea", pyidea],
+];

@@ -1365,6 +1365,18 @@ export const commands = {
 	 */
 	proxyCheckConnection: (proxy: ProxySettings, url: string) => typedError<string, IdeError>(__TAURI_INVOKE("proxy_check_connection", { proxy, url })),
 	/**
+	 *  `text` (the contents of `path`) with Ruff's safe lint fixes applied (`fix`) and then
+	 *  formatted by Ruff (`format`), or `None` when nothing changes. The project's Ruff
+	 *  configuration and exclusions apply. Cancel with `cancel_request(request)`.
+	 */
+	pyideaRuffApply: (path: IpcPath, text: string, fix: boolean, format: boolean, request: RequestId) => typedError<string | null, IdeError>(__TAURI_INVOKE("pyidea_ruff_apply", { path, text, fix, format, request })),
+	/**  The Ruff the project would use, or `None` when there is none. */
+	pyideaRuffInfo: () => typedError<{
+	version: string,
+} | null, IdeError>(__TAURI_INVOKE("pyidea_ruff_info")),
+	/**  Ruff's lint rules (empty without Ruff), cached per Ruff version. */
+	pyideaRuffRules: () => typedError<RuffRule[], IdeError>(__TAURI_INVOKE("pyidea_ruff_rules")),
+	/**
 	 *  The requirements of a `requirements*.txt` / `pyproject.toml` the project's interpreter
 	 *  doesn't satisfy; `None` for other files, or with no local interpreter to ask.
 	 */
@@ -11848,6 +11860,22 @@ export type RouteSource = {
 export type RubySettings = {
 	/**  Project interpreter executable; empty = auto-detect (`.ruby-version`, mise / asdf, else `ruby` on PATH). */
 	interpreter?: string,
+};
+
+export type RuffInfo = {
+	version: string,
+};
+
+/**  One lint rule, as `ruff rule --all --output-format json` describes it. */
+export type RuffRule = {
+	/**  `F401`. */
+	code: string,
+	/**  `unused-import`: the rule's documentation page name. */
+	name: string,
+	/**  `Pyflakes`. */
+	linter: string,
+	summary: string,
+	preview?: boolean,
 };
 
 export type RunConfig = RunConfig_Serialize | RunConfig_Deserialize;

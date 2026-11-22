@@ -22,12 +22,16 @@
     "crates/ide-host/tests/mojo_plugin.rs",
     "smoke/python-tests.test.ts"
   ],
-  "generated": ["src/bindings.ts", "Cargo.lock", "pnpm-lock.yaml"],
+  "generated": ["src/bindings.ts", "Cargo.lock", "pnpm-lock.yaml", "src-tauri/tests/commands.snap"],
   "shared": {
     "src/features/index.ts": 3,
     "src/settingsWindowBoot.ts": 2,
-    "src/platform/locales/text/en.json": 25,
-    "src/platform/locales/text/zh.json": 25
+    "src/platform/locales/text/en.json": 40,
+    "src/platform/locales/text/zh.json": 40,
+    "crates/ide-host/src/ops/mod.rs": 2,
+    "crates/ide-host/Cargo.toml": 1,
+    "src-tauri/src/lib.rs": 2,
+    "src/editor/lsp/hover.ts": 4
   },
   "catalogs": ["src/platform/locales/text/en.json", "src/platform/locales/text/zh.json"],
   "contracts": []
