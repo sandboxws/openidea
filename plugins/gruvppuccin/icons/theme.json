@@ -1,0 +1,193 @@
+{
+  "iconDefinitions": {
+    "c": {
+      "light": "icons/light/c.svg",
+      "dark": "icons/dark/c.svg"
+    },
+    "cpp": {
+      "light": "icons/light/cpp.svg",
+      "dark": "icons/dark/cpp.svg"
+    },
+    "css": {
+      "light": "icons/light/css.svg",
+      "dark": "icons/dark/css.svg"
+    },
+    "docker": {
+      "light": "icons/light/docker.svg",
+      "dark": "icons/dark/docker.svg"
+    },
+    "git": {
+      "light": "icons/light/git.svg",
+      "dark": "icons/dark/git.svg"
+    },
+    "go": {
+      "light": "icons/light/go.svg",
+      "dark": "icons/dark/go.svg"
+    },
+    "gradle": {
+      "light": "icons/light/gradle.svg",
+      "dark": "icons/dark/gradle.svg"
+    },
+    "html": {
+      "light": "icons/light/html.svg",
+      "dark": "icons/dark/html.svg"
+    },
+    "info": {
+      "light": "icons/light/info.svg",
+      "dark": "icons/dark/info.svg"
+    },
+    "java": {
+      "light": "icons/light/java.svg",
+      "dark": "icons/dark/java.svg"
+    },
+    "javascript": {
+      "light": "icons/light/javascript.svg",
+      "dark": "icons/dark/javascript.svg"
+    },
+    "json": {
+      "light": "icons/light/json.svg",
+      "dark": "icons/dark/json.svg"
+    },
+    "jsx": {
+      "light": "icons/light/jsx.svg",
+      "dark": "icons/dark/jsx.svg"
+    },
+    "kotlin": {
+      "light": "icons/light/kotlin.svg",
+      "dark": "icons/dark/kotlin.svg"
+    },
+    "markdown": {
+      "light": "icons/light/markdown.svg",
+      "dark": "icons/dark/markdown.svg"
+    },
+    "module": {
+      "light": "icons/light/module.svg",
+      "dark": "icons/dark/module.svg"
+    },
+    "php": {
+      "light": "icons/light/php.svg",
+      "dark": "icons/dark/php.svg"
+    },
+    "python": {
+      "light": "icons/light/python.svg",
+      "dark": "icons/dark/python.svg"
+    },
+    "ruby": {
+      "light": "icons/light/ruby.svg",
+      "dark": "icons/dark/ruby.svg"
+    },
+    "rust": {
+      "light": "icons/light/rust.svg",
+      "dark": "icons/dark/rust.svg"
+    },
+    "scss": {
+      "light": "icons/light/scss.svg",
+      "dark": "icons/dark/scss.svg"
+    },
+    "shell": {
+      "light": "icons/light/shell.svg",
+      "dark": "icons/dark/shell.svg"
+    },
+    "source-root": {
+      "light": "icons/light/sourceRoot.svg",
+      "dark": "icons/dark/sourceRoot.svg"
+    },
+    "swift": {
+      "light": "icons/light/swift.svg",
+      "dark": "icons/dark/swift.svg"
+    },
+    "task": {
+      "light": "icons/light/task.svg",
+      "dark": "icons/dark/task.svg"
+    },
+    "task-group": {
+      "light": "icons/light/taskGroup.svg",
+      "dark": "icons/dark/taskGroup.svg"
+    },
+    "tsx": {
+      "light": "icons/light/tsx.svg",
+      "dark": "icons/dark/tsx.svg"
+    },
+    "typescript": {
+      "light": "icons/light/typescript.svg",
+      "dark": "icons/dark/typescript.svg"
+    },
+    "xml": {
+      "light": "icons/light/xml.svg",
+      "dark": "icons/dark/xml.svg"
+    },
+    "yaml": {
+      "light": "icons/light/yaml.svg",
+      "dark": "icons/dark/yaml.svg"
+    }
+  },
+  "fileExtensions": {
+    "kt": "kotlin",
+    "kts": "kotlin",
+    "java": "java",
+    "go": "go",
+    "swift": "swift",
+    "js": "javascript",
+    "mjs": "javascript",
+    "cjs": "javascript",
+    "ts": "typescript",
+    "mts": "typescript",
+    "cts": "typescript",
+    "jsx": "jsx",
+    "tsx": "tsx",
+    "py": "python",
+    "rb": "ruby",
+    "php": "php",
+    "html": "html",
+    "htm": "html",
+    "css": "css",
+    "scss": "scss",
+    "json": "json",
+    "yaml": "yaml",
+    "yml": "yaml",
+    "md": "markdown",
+    "sh": "shell",
+    "bash": "shell",
+    "zsh": "shell",
+    "xml": "xml",
+    "rs": "rust",
+    "c": "c",
+    "h": "c",
+    "cpp": "cpp",
+    "hpp": "cpp",
+    "cc": "cpp",
+    "gitignore": "git",
+    "gitattributes": "git"
+  },
+  "fileNames": {
+    "dockerfile": "docker",
+    ".gitignore": "git",
+    ".gitattributes": "git"
+  },
+  "overrides": {
+    "module": "module",
+    "folder-source": "source-root",
+    "info": "info",
+    "gradle-project": "gradle",
+    "build-task": "task",
+    "build-task-group": "task-group"
+  },
+  "settings": [
+    {
+      "title": "Icons",
+      "items": [
+        {
+          "option": "hideFiles",
+          "invert": true,
+          "label": "Show file icons"
+        },
+        {
+          "option": "hideUiIcons",
+          "invert": true,
+          "label": "Replace IDE icons",
+          "hint": "Module, source root, Gradle and task icons"
+        }
+      ]
+    }
+  ]
+}
