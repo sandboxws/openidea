@@ -529,6 +529,7 @@ pyidea_mojo_status                           trusted            project_host bin
 pyidea_ruff_apply                            trusted            project_host bindings async
 pyidea_ruff_info                             trusted            project_host bindings async
 pyidea_ruff_rules                            trusted            project_host bindings async
+pyidea_science_prepare                       trusted            project_host bindings async
 pyidea_tests_collect                         trusted            project_host bindings async
 pyidea_tests_events                          always             project_host bindings async
 pyidea_tests_prepare                         trusted            project_host bindings async

@@ -321,5 +321,69 @@ class WebDiscoveryTests(unittest.TestCase):
             self.assertFalse(any("not_an_app" in a["file"] for a in apps))
 
 
+class ScienceTests(unittest.TestCase):
+    def test_profiles_a_script_into_cpuprofiles_that_keep_its_time(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            write(
+                root,
+                {
+                    "work.py": """
+                        import threading, sys
+                        def fib(n):
+                            return n if n < 2 else fib(n - 1) + fib(n - 2)
+                        def worker():
+                            fib(18)
+                        t = threading.Thread(target=worker, name="worker-1")
+                        t.start()
+                        fib(19)
+                        t.join()
+                        print("args", sys.argv[1:])
+                        """
+                },
+            )
+            out = root / "out"
+            done = run_helper([str(HELPERS / "openidea_science_profile.py"), str(out), "work.py", "--flag"], root)
+            self.assertEqual(done.returncode, 0, done.stderr)
+            self.assertIn("args ['--flag']", done.stdout)
+            profiles = sorted(out.glob("*.cpuprofile"))
+            self.assertTrue(profiles)
+            names = set()
+            for path in profiles:
+                data = json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(len(data["samples"]), len(data["timeDeltas"]))
+                ids = {n["id"] for n in data["nodes"]}
+                self.assertTrue(all(c in ids for n in data["nodes"] for c in n.get("children", [])))
+                names |= {n["callFrame"]["functionName"] for n in data["nodes"]}
+            self.assertIn("fib", names)
+            self.assertIn("worker", names)
+            self.assertNotIn("run_path", names, "runpy's frames are left out")
+
+    def test_captures_matplotlib_figures(self):
+        try:
+            import matplotlib  # noqa: F401
+        except ImportError:
+            self.skipTest("Matplotlib isn't installed")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            write(
+                root,
+                {
+                    "plot.py": """
+                        import matplotlib.pyplot as plt
+                        plt.plot([1, 2, 3]); plt.title("Line"); plt.show()
+                        plt.figure(); plt.bar(["a"], [1])
+                        """
+                },
+            )
+            plots = root / "plots"
+            env = {"MPLBACKEND": "module://openidea_mpl_backend", "OPENIDEA_PLOTS_DIR": str(plots), "PYTHONPATH": str(HELPERS)}
+            done = run_helper(["plot.py"], root, env=env)
+            self.assertEqual(done.returncode, 0, done.stderr)
+            entries = [json.loads(l) for l in (plots / "plots.jsonl").read_text(encoding="utf-8").splitlines()]
+            self.assertEqual([(e["title"], e["reason"]) for e in entries], [("Line", "show"), ("", "exit")])
+            self.assertTrue(all((plots / e["file"]).is_file() for e in entries))
+
+
 if __name__ == "__main__":
     unittest.main()

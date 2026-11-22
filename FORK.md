@@ -101,6 +101,15 @@ identifier). The IDE asks once to trust an unsigned plugin.
   Debug Mojo File) build with `-O0 -g` in a Before Launch command, then run or debug the binary;
   also **Build Mojo File**, **Reformat Mojo File** (`mojo format` on a copy), **Restart Mojo Language
   Server** and **Show Mojo Toolchain Status**.
+- **Science** (`src/features/scientific`, `crates/ide-pyidea/helpers/openidea_science_profile.py`,
+  `openidea_mpl_backend.py`): run executors for Python script / module configurations (the run
+  widget's ⋮ menu, the gutter ▶ popup, **Profile with cProfile**, **Run and Capture Plots**).
+  cProfile writes one `.cpuprofile` per thread (one for all threads from Python 3.12, where calls of
+  concurrently running threads can be recorded under another thread's caller) into upstream's
+  Profiler view; the call tree is expanded from cProfile's per-function callers in proportion to
+  each caller's time. Plot capture selects a Matplotlib backend that saves each figure when it's
+  shown, closed or still changed at exit, into the Plots tool window (follows the run live; pan,
+  zoom, open or show the PNG).
 
 ## Edits to upstream files
 

@@ -1410,6 +1410,8 @@ export const commands = {
 } | null, IdeError>(__TAURI_INVOKE("pyidea_ruff_info")),
 	/**  Ruff's lint rules (empty without Ruff), cached per Ruff version. */
 	pyideaRuffRules: () => typedError<RuffRule[], IdeError>(__TAURI_INVOKE("pyidea_ruff_rules")),
+	/**  Installs the helpers and makes an output directory for a `kind` capture (`profile`, `plots`). */
+	pyideaSciencePrepare: (kind: string) => typedError<ScienceCapture, IdeError>(__TAURI_INVOKE("pyidea_science_prepare", { kind })),
 	/**
 	 *  Collects `spec.framework`'s tests with the project's (or the given) interpreter. Collection
 	 *  imports project code and runs collection hooks, not test bodies. Cancel with
@@ -12527,6 +12529,13 @@ export type ScaffoldEvent =
 { type: "step"; text: string } | 
 /**  A line of a tool's output. */
 { type: "line"; text: string };
+
+export type ScienceCapture = {
+	/**  The helpers' directory (`openidea_science_profile.py`, the `openidea_mpl_backend` module). */
+	helpers: IpcPath,
+	/**  An empty directory for this capture's output. */
+	output: IpcPath,
+};
 
 export type Scope = {
 	name: string,
