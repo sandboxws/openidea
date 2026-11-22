@@ -254,7 +254,20 @@ export function buildPackage(palettes: readonly PaletteData[], tokensCss: string
   return files;
 }
 
+/** The fork's Gruvppuccin runtime (`src/features/gruvppuccin`) needs each palette's accent labels. */
+export const RUNTIME_DATA = "src/features/gruvppuccin/palettes.generated.json";
+
+export function runtimeData(palettes: readonly PaletteData[]): string {
+  const labels: Record<string, Record<string, string>> = {};
+  for (const p of orderPalettes(palettes)) {
+    const own = Object.entries(p.labels).filter(([slot, label]) => label.toLowerCase() !== slot);
+    if (own.length) labels[p.id] = Object.fromEntries(own);
+  }
+  return JSON.stringify({ labels }, null, 2) + "\n";
+}
+
 export const PLUGIN_DIR = fileURLToPath(new URL("../../plugins/gruvppuccin/", import.meta.url));
+export const REPO_DIR = fileURLToPath(new URL("../../", import.meta.url));
 const TOKENS_CSS = fileURLToPath(new URL("../../src/styles/tokens.css", import.meta.url));
 
 export function loadPalettes(): PaletteData[] {
@@ -264,10 +277,14 @@ export function loadPalettes(): PaletteData[] {
 
 function main(): void {
   const check = process.argv.includes("--check");
-  const files = buildPackage(loadPalettes(), readFileSync(TOKENS_CSS, "utf8"));
+  const palettes = loadPalettes();
+  const files = new Map<string, string>();
+  for (const [rel, content] of buildPackage(palettes, readFileSync(TOKENS_CSS, "utf8")))
+    files.set(join(PLUGIN_DIR, rel), content);
+  files.set(join(REPO_DIR, RUNTIME_DATA), runtimeData(palettes));
   const stale: string[] = [];
-  for (const [rel, content] of files) {
-    const path = join(PLUGIN_DIR, rel);
+  for (const [path, content] of files) {
+    const rel = path.startsWith(REPO_DIR) ? path.slice(REPO_DIR.length) : path;
     let current: string | null = null;
     try {
       current = readFileSync(path, "utf8");
@@ -284,7 +301,7 @@ function main(): void {
   if (check && stale.length) {
     console.error(`stale (run node scripts/gruvppuccin/generate.ts):\n  ${stale.join("\n  ")}`);
     process.exitCode = 1;
-  } else console.log(check ? `${files.size} files up to date` : `wrote ${files.size} files into ${PLUGIN_DIR}`);
+  } else console.log(check ? `${files.size} files up to date` : `wrote ${files.size} files`);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();

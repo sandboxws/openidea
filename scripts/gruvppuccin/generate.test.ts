@@ -9,7 +9,10 @@ import {
   ICON_FILE_NAMES,
   ICON_OVERRIDES,
   PLUGIN_DIR,
+  REPO_DIR,
+  RUNTIME_DATA,
   buildPackage,
+  runtimeData,
   loadPalettes,
   orderPalettes,
   themeId,
@@ -46,6 +49,14 @@ describe("Gruvppuccin plugin", () => {
       return !existsSync(path) || readFileSync(path, "utf8") !== content;
     });
     expect(stale.map(([rel]) => rel)).toEqual([]);
+  });
+
+  it("generates the runtime's accent labels", () => {
+    const data = runtimeData(palettes);
+    expect(readFileSync(join(REPO_DIR, RUNTIME_DATA), "utf8")).toBe(data);
+    const labels = (JSON.parse(data) as { labels: Record<string, Record<string, string>> }).labels;
+    expect(labels["nocturne-rosewood"]?.sapphire).toBe("Coral");
+    expect(labels.mocha).toBeUndefined();
   });
 
   it("ships 21 palettes × 3 styles, 16 dark and 5 light", () => {

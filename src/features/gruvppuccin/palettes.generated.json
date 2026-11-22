@@ -1,0 +1,68 @@
+{
+  "labels": {
+    "nocturne-gopher-macchiato": {
+      "sapphire": "Go Cyan",
+      "mauve": "Lilac",
+      "red": "Coral",
+      "green": "Lime",
+      "yellow": "Gold",
+      "peach": "Amber"
+    },
+    "nocturne-gopher-sand": {
+      "sapphire": "Go Cyan",
+      "green": "Olive",
+      "yellow": "Gold"
+    },
+    "nocturne-midnight-mocha": {
+      "sapphire": "Sky Blue",
+      "green": "Olive",
+      "yellow": "Gold"
+    },
+    "nocturne-nebula-ember": {
+      "sapphire": "Ember",
+      "mauve": "Orchid",
+      "green": "Lime",
+      "yellow": "Gold",
+      "peach": "Aqua"
+    },
+    "nocturne-neon-gopher": {
+      "sapphire": "Neon Cyan",
+      "mauve": "Violet",
+      "green": "Lime",
+      "yellow": "Gold",
+      "peach": "Orange"
+    },
+    "nocturne-pine-shadow": {
+      "sapphire": "Pine",
+      "mauve": "Orchid",
+      "red": "Coral",
+      "green": "Lagoon",
+      "yellow": "Gold",
+      "peach": "Ember"
+    },
+    "nocturne-rosewood": {
+      "sapphire": "Coral",
+      "mauve": "Lilac",
+      "red": "Ruby",
+      "green": "Sage",
+      "yellow": "Honey",
+      "peach": "Ice"
+    },
+    "nocturne-tidewater": {
+      "sapphire": "Teal",
+      "mauve": "Sky",
+      "red": "Salmon",
+      "green": "Lime",
+      "yellow": "Sand",
+      "peach": "Apricot"
+    },
+    "nocturne-void-gopher": {
+      "sapphire": "Sky Blue",
+      "mauve": "Lilac",
+      "red": "Rose",
+      "green": "Mint",
+      "yellow": "Butter",
+      "peach": "Apricot"
+    }
+  }
+}

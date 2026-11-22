@@ -4,6 +4,7 @@
     "scripts/fork/**",
     "scripts/gruvppuccin/**",
     "src/features/fork.ts",
+    "src/features/forkSettingsWindow.ts",
     "src/features/gruvppuccin/**",
     "src/features/pyidea/**",
     "src/features/python-tests/**",
@@ -24,7 +25,9 @@
   "generated": ["src/bindings.ts", "Cargo.lock", "pnpm-lock.yaml"],
   "shared": {
     "src/features/index.ts": 3,
-    "src/settingsWindowBoot.ts": 2
+    "src/settingsWindowBoot.ts": 2,
+    "src/platform/locales/text/en.json": 25,
+    "src/platform/locales/text/zh.json": 25
   },
   "catalogs": ["src/platform/locales/text/en.json", "src/platform/locales/text/zh.json"],
   "contracts": []

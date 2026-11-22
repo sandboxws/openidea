@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { activateSettingsPages as agentsPages } from "./features/agents/settingsPages";
 import { installLocaleSync } from "./features/app/locale";
 import { activateSettingsPages as databasePages } from "./features/database/settingsPages";
-import { forkSettingsWindow } from "./features/fork";
+import { forkSettingsWindow } from "./features/forkSettingsWindow";
 import { activateSettingsPages as githubPages } from "./features/github/settingsPages";
 import { activateSettingsPages as pluginsPages } from "./features/plugins/settingsPages";
 import { activate as projectTrust } from "./features/project-trust";
