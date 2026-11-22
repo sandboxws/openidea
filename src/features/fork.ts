@@ -8,6 +8,7 @@
  * editor service eagerly.
  */
 import { activate as gruvppuccin } from "./gruvppuccin";
+import { activate as mojo } from "./mojo";
 import { activate as pyidea } from "./pyidea";
 import { activate as pythonDeps } from "./python-deps";
 import { activate as pythonTests } from "./python-tests";
@@ -23,4 +24,5 @@ export const forkFeatures: Array<[string, Activate]> = [
   ["python-web", pythonWeb],
   ["toml-workbench", tomlWorkbench],
   ["python-deps", pythonDeps],
+  ["mojo", mojo],
 ];

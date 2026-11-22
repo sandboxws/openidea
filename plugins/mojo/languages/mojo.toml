@@ -1,0 +1,8 @@
+id = "mojo"
+name = "Mojo"
+extensions = ["mojo", "🔥"]
+line-comment = "#"
+indent = { tab-size = 4, insert-spaces = true }
+# Mojo reads like Python; the fork's Mojo feature marks the words Python doesn't have
+# (struct, trait, var, comptime…). Its language server comes from the project's SDK.
+ui-mode = "Python"

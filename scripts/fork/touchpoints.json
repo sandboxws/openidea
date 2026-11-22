@@ -10,6 +10,7 @@
     "src/features/python-tests/**",
     "src/features/python-web/**",
     "src/features/toml-workbench/**",
+    "src/features/python-deps/**",
     "src/features/mojo/**",
     "src/features/scientific/**",
     "src/features/spark/**",
@@ -28,7 +29,7 @@
     "src/settingsWindowBoot.ts": 2,
     "src/platform/locales/text/en.json": 300,
     "src/platform/locales/text/zh.json": 300,
-    "crates/ide-host/src/ops/mod.rs": 6,
+    "crates/ide-host/src/ops/mod.rs": 7,
     "crates/ide-host/Cargo.toml": 1,
     "src-tauri/src/lib.rs": 2,
     "src/editor/lsp/hover.ts": 4

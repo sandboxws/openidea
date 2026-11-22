@@ -1381,6 +1381,23 @@ export const commands = {
 	pyideaDepsPreview: (path: IpcPath, edits: PythonStagedEdit[], selection: PythonSyncSelection, request: RequestId) => typedError<PythonDependencyPreview, IdeError>(__TAURI_INVOKE("pyidea_deps_preview", { path, edits, selection, request })),
 	/**  The sync of the project's environment against its lock (Retry Sync). */
 	pyideaDepsSync: (path: IpcPath, selection: PythonSyncSelection) => typedError<PythonSyncCommand, IdeError>(__TAURI_INVOKE("pyidea_deps_sync", { path, selection })),
+	/**  Builds `source` into `output`; a failed build leaves the previous output in place. */
+	pyideaMojoBuild: (source: IpcPath, output: IpcPath, compilerArgs: string[], debug: boolean, request: RequestId) => typedError<MojoBuild, IdeError>(__TAURI_INVOKE("pyidea_mojo_build", { source, output, compilerArgs, debug, request })),
+	/**  The `mojo build` of `source` as a shell command line (a configuration's Before Launch task). */
+	pyideaMojoBuildLine: (source: IpcPath, output: IpcPath, compilerArgs: string[], debug: boolean) => typedError<string, IdeError>(__TAURI_INVOKE("pyidea_mojo_build_line", { source, output, compilerArgs, debug })),
+	/**  `text` (of the Mojo file `path`) formatted by `mojo format`, run on a copy. */
+	pyideaMojoFormat: (path: IpcPath, text: string, request: RequestId) => typedError<string, IdeError>(__TAURI_INVOKE("pyidea_mojo_format", { path, text, request })),
+	/**  What the project's Mojo files need configured, or none without a Mojo SDK. */
+	pyideaMojoSetup: () => typedError<{
+	/**  The SDK's environment. */
+	root: IpcPath,
+	/**  The project's `languageServers.mojo` entry: the SDK's language server for `mojo` files. */
+	server: unknown,
+	/**  A launcher for the SDK's `lldb-dap` (the project's `tools.lldb-dap.path`). */
+	adapter: IpcPath | null,
+} | null, IdeError>(__TAURI_INVOKE("pyidea_mojo_setup")),
+	/**  Show Mojo Toolchain Status: the SDK found, its version and missing tools. */
+	pyideaMojoStatus: () => typedError<MojoStatus, IdeError>(__TAURI_INVOKE("pyidea_mojo_status")),
 	/**
 	 *  `text` (the contents of `path`) with Ruff's safe lint fixes applied (`fix`) and then
 	 *  formatted by Ruff (`format`), or `None` when nothing changes. The project's Ruff
@@ -9881,6 +9898,29 @@ export type ModuleStructureSettings = {
 	testCompilerOutput?: string,
 	/**  Additional module dependencies. */
 	dependencies?: ModuleDependency[],
+};
+
+export type MojoBuild = {
+	ok: boolean,
+	/**  The compiler's output (diagnostics). */
+	output: string,
+};
+
+export type MojoSetup = {
+	/**  The SDK's environment. */
+	root: IpcPath,
+	/**  The project's `languageServers.mojo` entry: the SDK's language server for `mojo` files. */
+	server: unknown,
+	/**  A launcher for the SDK's `lldb-dap` (the project's `tools.lldb-dap.path`). */
+	adapter: IpcPath | null,
+};
+
+export type MojoStatus = {
+	root: IpcPath | null,
+	/**  `mojo --version`. */
+	version: string | null,
+	missing: string[],
+	error: string | null,
 };
 
 /**

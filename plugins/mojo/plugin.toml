@@ -1,0 +1,21 @@
+# Data only: the Mojo language (highlighting, comments, indentation) and its file icon.
+# The SDK's language server, formatting, running and debugging live in the fork's Mojo feature
+# (src/features/mojo, FORK.md).
+id = "mojo"
+name = "Mojo"
+version = "1.0.0"
+description = "Mojo source files (.mojo, .🔥): Python-style highlighting with Mojo's keywords, comments, indentation and the fire file icon."
+authors = ["OpenIDEA fork contributors"]
+license = "Apache-2.0"
+categories = ["languages"]
+change-notes = "1.0.0 — the language and icon from PyIdea's Mojo support."
+engines.openidea = "^1.0"
+
+[[contributes.languages]]
+path = "languages/mojo.toml"
+
+[[contributes.fileIcons]]
+id = "mojo"
+patterns = ["*.mojo", "*.🔥"]
+icon = "icons/mojo.svg"
+iconDark = "icons/mojo_dark.svg"

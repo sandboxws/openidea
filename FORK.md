@@ -46,6 +46,9 @@ identifier). The IDE asks once to trust an unsigned plugin.
   `node scripts/gruvppuccin/generate.ts` from `data/palettes.json` (see its README). Its accent,
   preset, bold keyword and corner radius settings are the fork feature `src/features/gruvppuccin`
   (Settings › Appearance › Gruvppuccin).
+- `plugins/mojo/`: the Mojo language (`.mojo`, `.🔥`; Python-style highlighting, comments,
+  indentation) and the fire file icon. The SDK's language server, formatting, running and debugging
+  are the fork feature `src/features/mojo`.
 
 ## Fork features
 
@@ -88,6 +91,16 @@ identifier). The IDE asks once to trust an unsigned plugin.
   no symbolic links), shows the lock and environment changes and the file diffs, and **Apply and
   Sync** writes the reviewed files, unless they changed since, then runs `uv sync --locked` for the
   selected groups and extras in the Run tool window.
+- **Mojo** (`src/features/mojo`, `crates/ide-pyidea/src/mojo.rs`, `plugins/mojo`): finds the project's
+  Mojo SDK (Settings › Languages & Frameworks › Mojo, else `.venv`, `.pixi/envs/default`, the
+  interpreter's environment) and, for a project with Mojo files, writes its project settings:
+  `languageServers.mojo` (the SDK's `mojo-lsp-server` with the import paths and source roots) and
+  `tools.lldb-dap.path` (a launcher for the SDK's `lldb-dap` that loads the Mojo LLDB plugin and
+  formatters; upstream's `lldb-dap` adapter has no per-launch init commands). Mojo's own keywords are
+  marked over Python's highlighting. **Mojo Application** configurations (▶ beside `main`; Run /
+  Debug Mojo File) build with `-O0 -g` in a Before Launch command, then run or debug the binary;
+  also **Build Mojo File**, **Reformat Mojo File** (`mojo format` on a copy), **Restart Mojo Language
+  Server** and **Show Mojo Toolchain Status**.
 
 ## Edits to upstream files
 

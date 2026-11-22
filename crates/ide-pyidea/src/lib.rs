@@ -3,6 +3,7 @@
 //! runs the tools.
 
 pub mod deps;
+pub mod mojo;
 pub mod ruff;
 pub mod tests;
 pub mod toml;

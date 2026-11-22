@@ -4,6 +4,7 @@
  * Workbench, CodeMirror and editor modules (`settingsWindowBoot.test.ts`).
  */
 import { activateSettingsWindow as gruvppuccin } from "./gruvppuccin/settingsWindow";
+import { activateSettingsWindow as mojo } from "./mojo/settingsWindow";
 import { activateSettingsWindow as pyidea } from "./pyidea/settingsWindow";
 
 type Activate = () => void | (() => void);
@@ -11,4 +12,5 @@ type Activate = () => void | (() => void);
 export const forkSettingsWindow: Array<[string, Activate]> = [
   ["gruvppuccin", gruvppuccin],
   ["pyidea", pyidea],
+  ["mojo", mojo],
 ];

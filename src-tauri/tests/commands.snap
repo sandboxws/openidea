@@ -521,6 +521,11 @@ pyidea_deps_apply                            trusted            project_host bin
 pyidea_deps_model                            trusted            project_host bindings async
 pyidea_deps_preview                          trusted            project_host bindings async
 pyidea_deps_sync                             trusted            project_host bindings async
+pyidea_mojo_build                            trusted            project_host bindings async
+pyidea_mojo_build_line                       trusted            project_host bindings async
+pyidea_mojo_format                           trusted            project_host bindings async
+pyidea_mojo_setup                            trusted            project_host bindings async
+pyidea_mojo_status                           trusted            project_host bindings async
 pyidea_ruff_apply                            trusted            project_host bindings async
 pyidea_ruff_info                             trusted            project_host bindings async
 pyidea_ruff_rules                            trusted            project_host bindings async

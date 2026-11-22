@@ -1,6 +1,7 @@
 //! Commands of this fork's features (FORK.md); their domain logic lives in `ide-pyidea`.
 
 pub mod deps;
+pub mod mojo;
 pub mod ruff;
 pub mod tests;
 pub mod toml;
