@@ -28,8 +28,8 @@
   "shared": {
     "src/features/index.ts": 3,
     "src/settingsWindowBoot.ts": 2,
-    "src/platform/locales/text/en.json": 300,
-    "src/platform/locales/text/zh.json": 300,
+    "src/platform/locales/text/en.json": 450,
+    "src/platform/locales/text/zh.json": 450,
     "crates/ide-host/src/ops/mod.rs": 9,
     "crates/ide-host/Cargo.toml": 1,
     "src-tauri/src/lib.rs": 2,
