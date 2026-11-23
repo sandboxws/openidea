@@ -1644,6 +1644,37 @@ export function runExecutors(map = useRunExecutors.getState().executors): RunExe
   return [...map.values()].sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.id.localeCompare(b.id));
 }
 
+/**
+ * A paused debugger's value, for a viewer offered in the Variables view's menu: `evaluate`
+ * runs an expression in the selected frame and returns its value text in full; `onChange`
+ * calls back when that frame changes (a step, another frame) and returns the unsubscribe.
+ */
+export interface DebugValue {
+  expression: string;
+  typeName: string | null;
+  adapter: string;
+  evaluate(expression: string): Promise<string>;
+  onChange(listener: () => void): () => void;
+}
+
+export interface ValueInspectorContribution {
+  id: string;
+  /** Menu label, e.g. `Inspect Large Value…`. */
+  label: string;
+  supports(value: Pick<DebugValue, "typeName" | "adapter">): boolean;
+  open(value: DebugValue): void;
+}
+
+const valueInspectors = new Map<string, ValueInspectorContribution>();
+
+export function registerValueInspector(inspector: ValueInspectorContribution): () => void {
+  valueInspectors.set(inspector.id, inspector);
+  return () => void (valueInspectors.get(inspector.id) === inspector && valueInspectors.delete(inspector.id));
+}
+
+export const valueInspectorsFor = (value: Pick<DebugValue, "typeName" | "adapter">) =>
+  [...valueInspectors.values()].filter((i) => i.supports(value));
+
 // ---------------------------------------------------------------------------
 // Run configuration types (IDEA's "Add New Configuration" list), contributed by
 // features and edited by features/run. A type is declarative: its form fields

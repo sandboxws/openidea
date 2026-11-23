@@ -1,0 +1,110 @@
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  /* A fixed height: the grid scrolls inside it instead of growing with the value. */
+  height: min(72vh, 720px);
+  min-height: 0;
+  padding: var(--space-2) var(--space-3);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.grow {
+  flex: 1;
+  min-width: 200px;
+}
+
+.small {
+  width: 72px;
+}
+
+.medium {
+  width: 140px;
+}
+
+.label {
+  color: var(--fg-muted);
+  font-size: var(--fs-small);
+}
+
+.status {
+  color: var(--fg-muted);
+  font-size: var(--fs-small);
+}
+
+.error {
+  margin: 0;
+  color: var(--danger);
+  font-size: var(--fs-small);
+  white-space: pre-wrap;
+}
+
+.grid {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  font-family: var(--font-mono);
+  font-size: var(--fs-code);
+}
+
+.cell,
+.head,
+.index,
+.corner {
+  position: absolute;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0 var(--space-1-5);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  line-height: 24px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.numeric {
+  text-align: right;
+}
+
+.head,
+.corner {
+  z-index: 2;
+  background: var(--bg-panel, var(--bg-app));
+  color: var(--fg-muted);
+  font-family: var(--font-ui);
+  font-size: var(--fs-small);
+}
+
+.headButton {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.index {
+  z-index: 1;
+  background: var(--bg-panel, var(--bg-app));
+  color: var(--fg-muted);
+}
+
+.corner {
+  z-index: 3;
+}
+
+.pending {
+  color: var(--fg-muted);
+}

@@ -9,7 +9,7 @@ import { fontWeightOf } from "@/platform/editorSettings";
 import { resolveMonoFont } from "@/platform/fonts";
 import { useProject } from "@/platform/project";
 import { activeEditor } from "@/editor/api";
-import { notifications } from "@/workbench/contributions";
+import { notifications, valueInspectorsFor } from "@/workbench/contributions";
 import { addFieldWatchpoint } from "../breakpoints/special";
 import { methodAt } from "../breakpoints/symbols";
 import {
@@ -406,6 +406,13 @@ export function VariablesView({
     const tableExpression = node.evaluateName;
     if (tableExpression && session != null && isTableType(node.typeName) && pausedIn(session)?.adapter === "debugpy")
       items.push({ label: "View as Table", run: () => openTableView(tableExpression, session) });
+    const adapter = pausedIn(session)?.adapter ?? "";
+    if (tableExpression && session != null)
+      for (const inspector of valueInspectorsFor({ typeName: node.typeName ?? null, adapter }))
+        items.push({
+          label: inspector.label,
+          run: () => inspector.open(debugValue(tableExpression, node.typeName ?? null, adapter, session)),
+        });
     items.push(
       { label: "Copy Value", icon: "copy", run: () => void copyValue(node) },
       { label: "Copy Name", run: () => void writeClipboardText(node.name) },
@@ -485,6 +492,22 @@ export function VariablesView({
       {valuePopup && <ValueDialog node={valuePopup} session={session} onClose={() => setValuePopup(null)} />}
     </div>
   );
+}
+
+/** A value of `session` for a contributed viewer: evaluated in the frame selected at the time. */
+function debugValue(expression: string, typeName: string | null, adapter: string, session: DebugSessionId) {
+  const of = (st = useDebug.getState()) => st.sessions[session];
+  return {
+    expression,
+    typeName,
+    adapter,
+    evaluate: async (expr: string) => (await evaluate(expr, "clipboard", of() ?? null)).value,
+    onChange: (listener: () => void) =>
+      useDebug.subscribe((st, prev) => {
+        const [a, b] = [of(st), of(prev)];
+        if (a?.stops !== b?.stops || a?.selectedFrame !== b?.selectedFrame || a?.status !== b?.status) listener();
+      }),
+  };
 }
 
 /** The session with this id while it is paused, with the adapter its root session started. */

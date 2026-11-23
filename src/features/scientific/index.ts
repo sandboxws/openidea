@@ -1,15 +1,36 @@
 /**
  * PyIdea's Science tools (FORK.md): profile a Python script or module with cProfile (shown in
- * the Profiler tool window) and capture its Matplotlib figures (the Plots tool window).
+ * the Profiler tool window), capture its Matplotlib figures (the Plots tool window), and
+ * Inspect Large Value of NumPy / pandas values in the debugger's Variables view.
  */
 import { executeAction, registerActions } from "@/platform/actions";
 import { lazyComponent } from "@/ui";
-import { registerRunExecutor, registerToolWindow, toolWindowService } from "@/workbench/contributions";
+import {
+  registerOverlay,
+  registerRunExecutor,
+  registerToolWindow,
+  registerValueInspector,
+  toolWindowService,
+} from "@/workbench/contributions";
 import { stopAll } from "./captures";
 import { cProfileExecutor, PLOTS_WINDOW, plotsExecutor } from "./executors";
+import { openInspect } from "./values/store";
+
+/** Type names debugpy reports for values Inspect Large Value reads. */
+const INSPECTABLE = /^(ndarray|DataFrame|Series|matrix|memmap|MaskedArray)$/;
 
 export function activate(): () => void {
   const disposers = [
+    registerValueInspector({
+      id: "pyidea.inspectLargeValue",
+      label: "Inspect Large Value…",
+      supports: (v) => v.adapter === "debugpy" && INSPECTABLE.test(v.typeName ?? ""),
+      open: openInspect,
+    }),
+    registerOverlay({
+      id: "pyidea.inspectLargeValue",
+      component: lazyComponent(() => import("./values/InspectDialog").then((m) => m.InspectDialog)),
+    }),
     registerRunExecutor(cProfileExecutor),
     registerRunExecutor(plotsExecutor),
     registerToolWindow({

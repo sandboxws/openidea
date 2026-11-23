@@ -32,7 +32,9 @@
     "crates/ide-host/src/ops/mod.rs": 8,
     "crates/ide-host/Cargo.toml": 1,
     "src-tauri/src/lib.rs": 2,
-    "src/editor/lsp/hover.ts": 4
+    "src/editor/lsp/hover.ts": 4,
+    "src/workbench/contributions.ts": 40,
+    "src/features/debugger/ui/VariablesView.tsx": 30
   },
   "catalogs": ["src/platform/locales/text/en.json", "src/platform/locales/text/zh.json"],
   "contracts": []

@@ -110,6 +110,12 @@ identifier). The IDE asks once to trust an unsigned plugin.
   each caller's time. Plot capture selects a Matplotlib backend that saves each figure when it's
   shown, closed or still changed at exit, into the Plots tool window (follows the run live; pan,
   zoom, open or show the PNG).
+  **Inspect Large Value…** in the debugger's Variables menu (debugpy; NumPy arrays and pandas
+  DataFrames / Series) reads the value in 30 × 30 cell pages as the grid scrolls (128 pages kept, 32
+  reads queued), through an expression that runs a helper in the paused frame; it views a slice or
+  transform, limits, filters and sorts rows by column, picks two display axes of a value with more
+  dimensions and fixes the others (`0=2`), and colors numeric columns by value (up to 10,000 values
+  per column). The Python Console isn't covered: its driver has no silent evaluation.
 
 ## Edits to upstream files
 
@@ -121,15 +127,17 @@ node scripts/fork/touchpoints.ts            # against upstream/main
 node scripts/fork/touchpoints.ts <ref>      # against another base
 ```
 
-| File                                     | Change                                                                         |
-| ---------------------------------------- | ------------------------------------------------------------------------------ |
-| `src/features/index.ts`                  | imports `forkFeatures` and activates it after upstream's features              |
-| `src/settingsWindowBoot.ts`              | imports `forkSettingsWindow` and activates it after upstream's pages           |
-| `src/platform/locales/text/{en,zh}.json` | the fork's UI text, one block at the top of each catalog                       |
-| `src/editor/lsp/hover.ts`                | `diagnosticRowDecorators`: lets a feature add to each problem row of the hover |
-| `crates/ide-host/src/ops/mod.rs`         | declares `ops::fork` and lists its command domains                             |
-| `crates/ide-host/Cargo.toml`             | depends on `ide-pyidea` by path                                                |
-| `src-tauri/src/lib.rs`                   | `recursion_limit` 512: upstream's command catalogue sits at the 256 limit      |
+| File                                         | Change                                                                         |
+| -------------------------------------------- | ------------------------------------------------------------------------------ |
+| `src/features/index.ts`                      | imports `forkFeatures` and activates it after upstream's features              |
+| `src/settingsWindowBoot.ts`                  | imports `forkSettingsWindow` and activates it after upstream's pages           |
+| `src/platform/locales/text/{en,zh}.json`     | the fork's UI text, one block at the top of each catalog                       |
+| `src/editor/lsp/hover.ts`                    | `diagnosticRowDecorators`: lets a feature add to each problem row of the hover |
+| `crates/ide-host/src/ops/mod.rs`             | declares `ops::fork` and lists its command domains                             |
+| `crates/ide-host/Cargo.toml`                 | depends on `ide-pyidea` by path                                                |
+| `src-tauri/src/lib.rs`                       | `recursion_limit` 512: upstream's command catalogue sits at the 256 limit      |
+| `src/workbench/contributions.ts`             | `registerValueInspector`: viewers offered for a paused debugger's variable     |
+| `src/features/debugger/ui/VariablesView.tsx` | offers those viewers in the Variables menu, with an `evaluate` in the frame    |
 
 ## Syncing with upstream
 
