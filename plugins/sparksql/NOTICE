@@ -1,0 +1,7 @@
+Spark SQL plugin for the OpenIDEA fork.
+
+The file icons (icons/sparksql.svg, icons/sparksql_dark.svg) were drawn for this plugin and are
+licensed under the Apache License, Version 2.0, like the rest of it.
+
+Apache Spark and Spark are trademarks of the Apache Software Foundation. This plugin is not
+affiliated with or endorsed by the Apache Software Foundation.

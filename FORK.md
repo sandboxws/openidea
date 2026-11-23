@@ -49,6 +49,9 @@ identifier). The IDE asks once to trust an unsigned plugin.
 - `plugins/mojo/`: the Mojo language (`.mojo`, `.🔥`; Python-style highlighting, comments,
   indentation) and the fire file icon. The SDK's language server, formatting, running and debugging
   are the fork feature `src/features/mojo`.
+- `plugins/sparksql/`: the Spark SQL language (`.sparksql`; SQL highlighting, comments,
+  indentation) and its file icon. Running, Explain and catalog completion are the fork feature
+  `src/features/spark`, which also runs statements of `.sparksql` files while the plugin isn't linked.
 
 ## Fork features
 
@@ -121,6 +124,19 @@ identifier). The IDE asks once to trust an unsigned plugin.
   (`call_soon_threadsafe`), within PyIdea's limits (600 samples, 32 threads and tasks, 16 frames), into
   the Thread Timeline tool window: a lane per thread and task, cells colored by the innermost
   function, the sampled stack with source links.
+- **Spark** (`src/features/spark`, `crates/ide-pyidea/helpers/openidea_spark_bridge.py`,
+  `crates/ide-host/src/ops/fork/spark.rs`): PyIdea's Spark workspace. Connections (local master or
+  `sc://` Spark Connect, the interpreter with PySpark, Spark UI and History Server URLs) are project
+  settings (`plugins.spark.connections`); the Connect token, the monitoring Authorization header and
+  the Spark configuration are in the OS credential store. Each connection runs one session process
+  (the bridge, hidden from the Run tool window) that the **Spark** tool window (catalog: tables,
+  views, columns, console DataFrames), the Spark console and Spark SQL files share, temporary views
+  included. **Run in Spark** / **Explain in Spark** run the selection or the statement at the caret;
+  **Spark Results** shows a bounded sample (100 rows by default, at most 1,000 rows, 200 columns,
+  4 KiB cells, 8 MiB per reply) with filter and sort (which run the query again), Count, CSV export
+  and Cancel (a job group, or a Connect tag). A local driver binds to loopback unless the
+  configuration says otherwise; a Spark Connect session that doesn't answer in 60 s fails. Not yet
+  ported: Monitor, Streaming and History, and Run / Debug with Spark.
 
 ## Edits to upstream files
 

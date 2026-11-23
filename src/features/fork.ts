@@ -14,6 +14,7 @@ import { activate as pythonDeps } from "./python-deps";
 import { activate as pythonTests } from "./python-tests";
 import { activate as pythonWeb } from "./python-web";
 import { activate as scientific } from "./scientific";
+import { activate as spark } from "./spark";
 import { activate as tomlWorkbench } from "./toml-workbench";
 
 type Activate = () => void | (() => void);
@@ -27,4 +28,5 @@ export const forkFeatures: Array<[string, Activate]> = [
   ["python-deps", pythonDeps],
   ["mojo", mojo],
   ["scientific", scientific],
+  ["spark", spark],
 ];

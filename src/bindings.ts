@@ -1415,6 +1415,15 @@ export const commands = {
 	 *  `timeline`).
 	 */
 	pyideaSciencePrepare: (kind: string) => typedError<ScienceCapture, IdeError>(__TAURI_INVOKE("pyidea_science_prepare", { kind })),
+	/**  Where the session process's helper (`openidea_spark_bridge.py`) is installed. */
+	pyideaSparkHelpers: () => typedError<IpcPath, IdeError>(__TAURI_INVOKE("pyidea_spark_helpers")),
+	/**
+	 *  A connection's saved credential, if any: `token` (the Connect token), `authorization` (the
+	 *  monitoring Authorization header) or `conf` (its Spark configuration, which can hold keys).
+	 */
+	pyideaSparkSecret: (connection: string, kind: string) => typedError<string | null, IdeError>(__TAURI_INVOKE("pyidea_spark_secret", { connection, kind })),
+	/**  Saves (or with none, forgets) a connection's credential. */
+	pyideaSparkSetSecret: (connection: string, kind: string, value: string | null) => typedError<null, IdeError>(__TAURI_INVOKE("pyidea_spark_set_secret", { connection, kind, value })),
 	/**
 	 *  Collects `spec.framework`'s tests with the project's (or the given) interpreter. Collection
 	 *  imports project code and runs collection hooks, not test bodies. Cancel with

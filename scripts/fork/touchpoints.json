@@ -21,6 +21,7 @@
     "crates/ide-host/src/ops/fork/**",
     "crates/ide-host/tests/gruvppuccin_plugin.rs",
     "crates/ide-host/tests/mojo_plugin.rs",
+    "crates/ide-host/tests/sparksql_plugin.rs",
     "smoke/python-tests.test.ts"
   ],
   "generated": ["src/bindings.ts", "Cargo.lock", "pnpm-lock.yaml", "src-tauri/tests/commands.snap"],
@@ -29,7 +30,7 @@
     "src/settingsWindowBoot.ts": 2,
     "src/platform/locales/text/en.json": 300,
     "src/platform/locales/text/zh.json": 300,
-    "crates/ide-host/src/ops/mod.rs": 8,
+    "crates/ide-host/src/ops/mod.rs": 9,
     "crates/ide-host/Cargo.toml": 1,
     "src-tauri/src/lib.rs": 2,
     "src/editor/lsp/hover.ts": 4,

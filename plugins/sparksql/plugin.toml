@@ -1,0 +1,21 @@
+# Data only: the Spark SQL language (highlighting, comments, indentation) and its file icon.
+# Running, Explain, catalog completion and the session live in the fork's Spark feature
+# (src/features/spark, FORK.md).
+id = "sparksql"
+name = "Spark SQL"
+version = "1.0.0"
+description = "Spark SQL files (.sparksql): SQL highlighting, comments and indentation, and a file icon, for the fork's Spark workspace."
+authors = ["OpenIDEA fork contributors"]
+license = "Apache-2.0"
+categories = ["languages"]
+change-notes = "1.0.0 — the .sparksql file type from PyIdea's Spark workspace."
+engines.openidea = "^1.0"
+
+[[contributes.languages]]
+path = "languages/sparksql.toml"
+
+[[contributes.fileIcons]]
+id = "sparksql"
+patterns = ["*.sparksql"]
+icon = "icons/sparksql.svg"
+iconDark = "icons/sparksql_dark.svg"

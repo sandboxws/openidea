@@ -392,6 +392,43 @@ class ScienceTests(unittest.TestCase):
             self.assertTrue(any(t["coro"] == "waiting" for t in tasks))
             self.assertTrue(all(t["frames"][0][2] in ("waiting", "main", "sleep") for t in tasks if t["frames"]))
 
+    def test_spark_bridge_answers_without_a_session(self):
+        requests = [
+            {"id": 1, "op": "sql", "text": "SELECT 1"},
+            {"id": 2, "op": "nope"},
+            {"id": 3, "op": "cancel", "target": 1},
+            {"id": 4, "op": "close"},
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            done = subprocess.run(
+                [sys.executable, "-B", str(HELPERS / "openidea_spark_bridge.py")],
+                cwd=tmp,
+                input="".join(json.dumps(r) + "\n" for r in requests),
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+        self.assertEqual(done.returncode, 0, done.stderr)
+        # Not splitlines(): it breaks lines at U+001E too.
+        replies = [json.loads(l[1:]) for l in done.stdout.split("\n") if l.startswith("\x1e")]
+        self.assertEqual(replies[0]["event"], "ready")
+        by_id = {r["id"]: r for r in replies[1:]}
+        self.assertEqual(by_id[1], {"id": 1, "ok": False, "error": "Not connected"})
+        self.assertIn("unknown request", by_id[2]["error"])
+        self.assertTrue(by_id[3]["ok"])
+
+    def test_spark_bridge_describes_errors(self):
+        sys.path.insert(0, str(HELPERS))
+        try:
+            import openidea_spark_bridge as bridge
+        finally:
+            sys.path.remove(str(HELPERS))
+        grpc = Exception('<_InactiveRpcError of RPC that terminated with:\n\tstatus = StatusCode.UNAUTHENTICATED\n\tdetails = "Invalid authentication token"\n>')
+        self.assertEqual(bridge.describe(grpc), "UNAUTHENTICATED: Invalid authentication token")
+        self.assertEqual(bridge.describe(ValueError("first\nsecond")), "ValueError: first")
+        self.assertEqual(bridge.cell("x" * 5000)[-1], "…")
+        self.assertEqual(len(bridge.cell("x" * 5000)), bridge.MAX_CELL)
+
     def test_captures_matplotlib_figures(self):
         try:
             import matplotlib  # noqa: F401

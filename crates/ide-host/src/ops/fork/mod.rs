@@ -4,6 +4,7 @@ pub mod deps;
 pub mod mojo;
 pub mod ruff;
 pub mod science;
+pub mod spark;
 pub mod tests;
 pub mod toml;
 pub mod web;

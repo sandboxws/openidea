@@ -20,6 +20,7 @@ pub const HELPERS: &[(&str, &str)] = &[
     (WEB_DISCOVER, include_str!("../../helpers/openidea_web_discover.py")),
     (SCIENCE_PROFILE, include_str!("../../helpers/openidea_science_profile.py")),
     (SCIENCE_TIMELINE, include_str!("../../helpers/openidea_science_timeline.py")),
+    ("openidea_spark_bridge.py", include_str!("../../helpers/openidea_spark_bridge.py")),
     ("openidea_mpl_backend.py", include_str!("../../helpers/openidea_mpl_backend.py")),
 ];
 

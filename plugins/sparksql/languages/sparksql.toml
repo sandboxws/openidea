@@ -1,0 +1,9 @@
+id = "sparksql"
+name = "Spark SQL"
+extensions = ["sparksql"]
+line-comment = "--"
+block-comment = ["/*", "*/"]
+indent = { tab-size = 4, insert-spaces = true }
+# SQL highlighting; with the fork's Spark feature, Run in Spark and Explain in Spark run the
+# statement at the caret in the selected connection's session, and its catalog completes names.
+ui-mode = "SQL"

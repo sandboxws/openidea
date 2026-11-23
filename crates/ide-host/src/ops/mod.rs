@@ -95,6 +95,7 @@ ide_command::domains!(
     fork_deps: crate::ops::fork::deps,
     fork_mojo: crate::ops::fork::mojo,
     fork_science: crate::ops::fork::science,
+    fork_spark: crate::ops::fork::spark,
     fs: crate::ops::fs,
     heap: crate::ops::heap,
     history: crate::ops::history,

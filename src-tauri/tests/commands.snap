@@ -530,6 +530,9 @@ pyidea_ruff_apply                            trusted            project_host bin
 pyidea_ruff_info                             trusted            project_host bindings async
 pyidea_ruff_rules                            trusted            project_host bindings async
 pyidea_science_prepare                       trusted            project_host bindings async
+pyidea_spark_helpers                         trusted            project_host bindings async
+pyidea_spark_secret                          trusted            project_host bindings async
+pyidea_spark_set_secret                      trusted            project_host bindings async
 pyidea_tests_collect                         trusted            project_host bindings async
 pyidea_tests_events                          always             project_host bindings async
 pyidea_tests_prepare                         trusted            project_host bindings async
