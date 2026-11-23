@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { PlotEntry } from "./program";
+import type { Timeline } from "./timeline";
 
 export interface PlotCapture {
   /** Its output directory. */
@@ -32,3 +33,23 @@ export function upsertCapture(dir: string, patch: Partial<PlotCapture>) {
 }
 
 export const imagePath = (capture: PlotCapture, file: string) => `${capture.dir}/${file}`;
+
+export interface TimelineCapture {
+  dir: string;
+  name: string;
+  timeline: Timeline;
+}
+
+interface TimelinesState {
+  captures: TimelineCapture[];
+  /** Index into `captures`. */
+  current: number;
+  /** The cell shown: a lane key and a sample. */
+  selected: { lane: string; sample: number } | null;
+}
+
+export const useTimelines = create<TimelinesState>(() => ({ captures: [], current: 0, selected: null }));
+
+export function addTimeline(capture: TimelineCapture) {
+  useTimelines.setState((s) => ({ captures: [capture, ...s.captures].slice(0, 10), current: 0, selected: null }));
+}

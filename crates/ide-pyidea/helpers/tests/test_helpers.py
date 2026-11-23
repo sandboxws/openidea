@@ -359,6 +359,39 @@ class ScienceTests(unittest.TestCase):
             self.assertIn("worker", names)
             self.assertNotIn("run_path", names, "runpy's frames are left out")
 
+    def test_samples_threads_and_asyncio_tasks(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            write(
+                root,
+                {
+                    "work.py": """
+                        import asyncio, threading, time
+                        def worker():
+                            time.sleep(0.3)
+                        async def waiting():
+                            await asyncio.sleep(0.4)
+                        async def main():
+                            t = threading.Thread(target=worker, name="sleeper")
+                            t.start()
+                            await asyncio.gather(waiting(), waiting())
+                            t.join()
+                        asyncio.run(main())
+                        """
+                },
+            )
+            out = root / "out"
+            done = run_helper([str(HELPERS / "openidea_science_timeline.py"), str(out), "work.py"], root)
+            self.assertEqual(done.returncode, 0, done.stderr)
+            samples = [json.loads(l) for l in (out / "timeline.jsonl").read_text(encoding="utf-8").splitlines()]
+            self.assertGreater(len(samples), 5)
+            threads = {t["name"] for s in samples for t in s["threads"]}
+            self.assertIn("sleeper", threads)
+            self.assertNotIn("openidea-timeline", threads, "the sampler leaves itself out")
+            tasks = [t for s in samples for t in s["tasks"]]
+            self.assertTrue(any(t["coro"] == "waiting" for t in tasks))
+            self.assertTrue(all(t["frames"][0][2] in ("waiting", "main", "sleep") for t in tasks if t["frames"]))
+
     def test_captures_matplotlib_figures(self):
         try:
             import matplotlib  # noqa: F401

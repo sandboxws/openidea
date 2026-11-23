@@ -13,7 +13,7 @@ import {
   toolWindowService,
 } from "@/workbench/contributions";
 import { stopAll } from "./captures";
-import { cProfileExecutor, PLOTS_WINDOW, plotsExecutor } from "./executors";
+import { cProfileExecutor, PLOTS_WINDOW, plotsExecutor, TIMELINE_WINDOW, timelineExecutor } from "./executors";
 import { openInspect } from "./values/store";
 
 /** Type names debugpy reports for values Inspect Large Value reads. */
@@ -33,6 +33,17 @@ export function activate(): () => void {
     }),
     registerRunExecutor(cProfileExecutor),
     registerRunExecutor(plotsExecutor),
+    registerRunExecutor(timelineExecutor),
+    registerToolWindow({
+      id: TIMELINE_WINDOW,
+      title: "Thread Timeline",
+      icon: "toolwindow-profiler",
+      anchor: "bottom",
+      stripe: "onUse",
+      order: 26,
+      requiresProject: true,
+      component: lazyComponent(() => import("./ui/TimelineView").then((m) => m.TimelineView)),
+    }),
     registerToolWindow({
       id: PLOTS_WINDOW,
       title: "Plots",
@@ -59,6 +70,14 @@ export function activate(): () => void {
         when: "projectOpen",
         keywords: ["matplotlib", "plot", "figure", "python", "science"],
         run: () => executeAction("run.withExecutor", { executor: plotsExecutor.id }).then(() => undefined),
+      },
+      {
+        id: "scientific.recordTimeline",
+        title: "Record Thread and Task Timeline",
+        category: "Run",
+        when: "projectOpen",
+        keywords: ["threads", "asyncio", "tasks", "sampling", "concurrency", "python"],
+        run: () => executeAction("run.withExecutor", { executor: timelineExecutor.id }).then(() => undefined),
       },
       {
         id: "scientific.openPlots",

@@ -116,6 +116,11 @@ identifier). The IDE asks once to trust an unsigned plugin.
   transform, limits, filters and sorts rows by column, picks two display axes of a value with more
   dimensions and fixes the others (`0=2`), and colors numeric columns by value (up to 10,000 values
   per column). The Python Console isn't covered: its driver has no silent evaluation.
+  **Record Thread and Task Timeline** (`openidea_science_timeline.py`) samples the run's threads every
+  20 ms (`sys._current_frames()`, no trace hook) and its asyncio tasks on their own loop
+  (`call_soon_threadsafe`), within PyIdea's limits (600 samples, 32 threads and tasks, 16 frames), into
+  the Thread Timeline tool window: a lane per thread and task, cells colored by the innermost
+  function, the sampled stack with source links.
 
 ## Edits to upstream files
 

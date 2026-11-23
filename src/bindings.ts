@@ -1410,7 +1410,10 @@ export const commands = {
 } | null, IdeError>(__TAURI_INVOKE("pyidea_ruff_info")),
 	/**  Ruff's lint rules (empty without Ruff), cached per Ruff version. */
 	pyideaRuffRules: () => typedError<RuffRule[], IdeError>(__TAURI_INVOKE("pyidea_ruff_rules")),
-	/**  Installs the helpers and makes an output directory for a `kind` capture (`profile`, `plots`). */
+	/**
+	 *  Installs the helpers and makes an output directory for a `kind` capture (`profile`, `plots`,
+	 *  `timeline`).
+	 */
 	pyideaSciencePrepare: (kind: string) => typedError<ScienceCapture, IdeError>(__TAURI_INVOKE("pyidea_science_prepare", { kind })),
 	/**
 	 *  Collects `spec.framework`'s tests with the project's (or the given) interpreter. Collection

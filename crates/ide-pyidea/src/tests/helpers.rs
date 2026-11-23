@@ -8,6 +8,7 @@ use std::path::{Path, PathBuf};
 pub const COLLECT: &str = "openidea_tests_collect.py";
 pub const WEB_DISCOVER: &str = "openidea_web_discover.py";
 pub const SCIENCE_PROFILE: &str = "openidea_science_profile.py";
+pub const SCIENCE_TIMELINE: &str = "openidea_science_timeline.py";
 /// A Matplotlib backend module (`MPLBACKEND=module://openidea_mpl_backend`).
 pub const PLOTS_BACKEND: &str = "openidea_mpl_backend";
 
@@ -18,6 +19,7 @@ pub const HELPERS: &[(&str, &str)] = &[
     ("openidea_doctest_runner.py", include_str!("../../helpers/openidea_doctest_runner.py")),
     (WEB_DISCOVER, include_str!("../../helpers/openidea_web_discover.py")),
     (SCIENCE_PROFILE, include_str!("../../helpers/openidea_science_profile.py")),
+    (SCIENCE_TIMELINE, include_str!("../../helpers/openidea_science_timeline.py")),
     ("openidea_mpl_backend.py", include_str!("../../helpers/openidea_mpl_backend.py")),
 ];
 

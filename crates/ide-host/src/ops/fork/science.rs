@@ -30,10 +30,11 @@ fn prune(dir: &Path) {
     }
 }
 
-/// Installs the helpers and makes an output directory for a `kind` capture (`profile`, `plots`).
+/// Installs the helpers and makes an output directory for a `kind` capture (`profile`, `plots`,
+/// `timeline`).
 #[command(trust = trusted)]
 pub async fn pyidea_science_prepare(host: &Host, kind: String) -> IdeResult<ScienceCapture> {
-    if !matches!(kind.as_str(), "profile" | "plots") {
+    if !matches!(kind.as_str(), "profile" | "plots" | "timeline") {
         return Err(IdeError::invalid(format!("unknown capture `{kind}`")));
     }
     let data_dir = host.local_data_dir.clone();
